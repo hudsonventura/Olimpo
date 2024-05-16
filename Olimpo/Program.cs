@@ -1,7 +1,8 @@
 ﻿using System.Net.NetworkInformation;
-using System.Net.Sockets;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Olimpo;
+using Olimpo.Plugins;
 using Spectre.Console;
 
 
@@ -18,38 +19,42 @@ IConfiguration appsettings = new ConfigurationBuilder()
 var console = AnsiConsole.Console;
 var table = new Table().Centered();
 table.Title("[yellow]Título da Tabela[/]");
-table.AddColumn("Nome");
-table.AddColumn("IP");
-table.AddColumn("Porta");
-table.AddColumn("Ping");
-table.AddColumn("Porta Status");
-table.AddColumn("Latencia");
+table.AddColumn("Name");
+table.AddColumn("Host");
+table.AddColumn("Protocol");
+table.AddColumn("Port");
+table.AddColumn("Latency");
+table.AddColumn("Status");
 
 
         
 while (true)
 {
-    var results = new List<(Ativo ativo, bool isPortOpen, long pingTime, long portLatency)>();
+    var results = new List<(Ativo, long)>();
     var ativos = appsettings.GetSection("ativos").Get<List<Ativo>>();
     foreach (var ativo in ativos)
     {
         var result = await CheckHost(ativo);
-        results.Add(result);
+        results.Add((ativo, result));
     }
 
-    table.Rows.Clear();
-    foreach (var (ativo, isPortOpen, pingTime, portLatency) in results)
-    {
-        DisplayResult(table, ativo, isPortOpen, pingTime, portLatency);
-    }
     
     try
     {
+        table.Rows.Clear();
         AnsiConsole.Clear();
     }
     catch (System.Exception)
     {
         
+    }
+
+    foreach (var (ativo, result) in results)
+    {
+        var color = (result == -1) ? "red" : result < 50 ? "green" : result < 100 ? "yellow" : "red";
+        var status = (result == -1) ? "Error" : "Success";
+
+        table.AddRow(ativo.name, ativo.host, ativo.type.ToString(), ativo.port.ToString(), $"[{color}]{result}ms[/]", $"[{color}]{status}[/]");
     }
     AnsiConsole.Write(table);
     await Task.Delay(1000); // Atualiza a cada segundo
@@ -58,8 +63,36 @@ while (true)
 
 
 
-static async Task<(Ativo, bool, long, long)> CheckHost(Ativo ativo)
+static async Task<long> CheckHost(Ativo ativo)
 {
+    string targetNamespace = "Olimpo.Plugins";
+    string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;;
+    string nomeCompletoDaClasse = $"{targetNamespace}.{ativo.type}";
+    Assembly assembly = Assembly.Load(targetAssemblyName);
+
+
+    var  fullClassName  = assembly.GetType(nomeCompletoDaClasse);
+    Type type = fullClassName;
+    object instance = Activator.CreateInstance(type);
+
+    MethodInfo metodo = type.GetMethod("Test");
+    if (metodo != null)
+    {
+        metodo.Invoke(null, null);
+    }
+
+    switch (ativo.type)
+    {
+        case Ativo.Type.Ping: return await TestPing(ativo.host);
+        
+        //case Ativo.Type.TCP: return await TestPort(ativo);
+
+    
+        default: throw new Exception($"The type {ativo.type.ToString()} was not implemented yet");
+    }
+}
+
+static async Task<long> TestPing(string host){
     var ping = new Ping();
 
     PingReply pingReply;
@@ -67,49 +100,24 @@ static async Task<(Ativo, bool, long, long)> CheckHost(Ativo ativo)
     long pingTime = -1;
     try
     {
-        pingReply = await ping.SendPingAsync(ativo.ip);
+        pingReply = await ping.SendPingAsync(host);
         isPingSuccess = pingReply.Status == IPStatus.Success;
-        pingTime = pingReply.RoundtripTime;
+        return pingReply.RoundtripTime;
     }
     catch (System.Exception)
     {
-        
-    }
-
-    var (isPortOpen, portLatency) = await CheckPortAsync(ativo.ip, ativo.porta);
-    return (ativo, isPingSuccess, pingTime, portLatency);
-}
-
-
-
-static async Task<(bool, long)> CheckPortAsync(string host, int port)
-{
-    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-    try
-    {
-        using (TcpClient client = new TcpClient())
-        {
-            var task = client.ConnectAsync(host, port);
-            var result = await Task.WhenAny(task, Task.Delay(1000)); // Timeout de 5 segundos
-            stopwatch.Stop();
-            bool isPortOpen = result == task && client.Connected;
-            long portLatency = stopwatch.ElapsedMilliseconds;
-            return (isPortOpen, (isPortOpen == true) ? portLatency : -1);
-        }
-    }
-    catch
-    {
-        stopwatch.Stop();
-        return (false, -1);
+        return -1;
     }
 }
 
 
-static void DisplayResult(Table table, Ativo ativo, bool isPortOpen, long pingTime, long portLatency)
-{
-    var pingColor = (pingTime == -1) ? "red" : pingTime < 60 ? "green" : pingTime < 100 ? "yellow" : "red";
-    var portColor = (portLatency == -1) ? "red" : portLatency < 60 ? "green" : portLatency < 100 ? "yellow" : "red";
-    var portOpen = isPortOpen ? "Open" : "Closed";
 
-    table.AddRow(ativo.nome, ativo.ip, ativo.porta.ToString(), $"[{pingColor}]{pingTime}ms[/]", $"[{portColor}]{portOpen}[/]", $"[{portColor}]{portLatency}ms[/]");
+
+
+static void DisplayResult(Table table, Ativo ativo, long result)
+{
+    var color = (result == -1) ? "red" : result < 60 ? "green" : result < 100 ? "yellow" : "red";
+    var status = (result == -1) ? "Error" : "Success";
+
+    table.AddRow(ativo.name, ativo.host, ativo.type.ToString(), ativo.port.ToString(), $"[{color}]{result}ms[/]", $"[{color}]{status}[/]");
 }

@@ -1,11 +1,16 @@
-using System.Net;
 namespace Olimpo;
 
 public class Ativo
 {
-    public string nome { get; set; }
-    public string ip { get; set; }
-    public int porta { get; set; }
+    public string name { get; set; }
+    public string host { get; set; }
+    public int port { get; set; }
+
+    public Type type {get; set; }
 
 
+    public enum Type{
+        Ping,
+        TCP
+    }
 }
