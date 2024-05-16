@@ -98,7 +98,7 @@ static async Task<(Ativo, bool, long, long)> CheckHost(Ativo ativo)
 
     PingReply pingReply;
     bool isPingSuccess = false;
-    long pingTime = 0;
+    long pingTime = -1;
     try
     {
         pingReply = await ping.SendPingAsync(ativo.ip);
@@ -149,7 +149,7 @@ static async Task<(bool, long)> CheckPortAsync(string host, int port)
 
             long portLatency = stopwatch.ElapsedMilliseconds;
 
-            return (isPortOpen, (isPortOpen == true) ? portLatency : 0);
+            return (isPortOpen, (isPortOpen == true) ? portLatency : -1);
 
         }
 
@@ -161,7 +161,7 @@ static async Task<(bool, long)> CheckPortAsync(string host, int port)
 
         stopwatch.Stop();
 
-        return (false, 0);
+        return (false, -1);
 
     }
 
@@ -172,9 +172,9 @@ static async Task<(bool, long)> CheckPortAsync(string host, int port)
 static void DisplayResult(Table table, Ativo ativo, bool isPortOpen, long pingTime, long portLatency)
 
 {
-    var pingColor = (pingTime == 0) ? "red" : pingTime < 60 ? "green" : pingTime < 100 ? "yellow" : "red";
+    var pingColor = (pingTime == -1) ? "red" : pingTime < 60 ? "green" : pingTime < 100 ? "yellow" : "red";
 
-    var portColor = (portLatency == 0) ? "red" : portLatency < 60 ? "green" : portLatency < 100 ? "yellow" : "red";
+    var portColor = (portLatency == -1) ? "red" : portLatency < 60 ? "green" : portLatency < 100 ? "yellow" : "red";
 
     var portOpen = isPortOpen ? "Open" : "Closed";
 
