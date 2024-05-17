@@ -6,11 +6,9 @@ public class Ativo
     public string host { get; set; }
     public int port { get; set; }
 
-    public Type type {get; set; }
+    public int timeout { get; set; }
+
+    public string type {get; set; }
 
 
-    public enum Type{
-        Ping,
-        TCP
-    }
 }
