@@ -1,9 +1,11 @@
 
-namespace Olimpo.Plugins;
+using Olimpo.Domain;
 
-public class PING : IPlugin
+namespace Olimpo.Protocols;
+
+public class PING : ISensorType
 {
-    public async Task<Result> Test(Ativo ativo)
+    public async Task<Result> Test(Service service, Sensor sensor)
     {
         var ping = new System.Net.NetworkInformation.Ping();
 
@@ -12,8 +14,8 @@ public class PING : IPlugin
         {
             using (var cts = new CancellationTokenSource())
             {
-                cts.CancelAfter(TimeSpan.FromMilliseconds(ativo.timeout)); // Timeout de 5 segundos
-                var task = ping.SendPingAsync(ativo.host);
+                cts.CancelAfter(TimeSpan.FromMilliseconds(sensor.timeout)); // Timeout de 5 segundos
+                var task = ping.SendPingAsync(service.host);
                 var completedTask = await Task.WhenAny(task, Task.Delay(Timeout.Infinite, cts.Token));
 
                 if (completedTask == task)
@@ -21,7 +23,7 @@ public class PING : IPlugin
                     // A operação de ping completou dentro do tempo limite
                     pingReply = await task;
                     bool isPingSuccess = pingReply.Status == System.Net.NetworkInformation.IPStatus.Success;
-                    return new Result() { Message = "Success", Latency = pingReply.RoundtripTime };
+                    return new Result() { Message = "Success", Latency = pingReply.RoundtripTime, Value = pingReply.RoundtripTime };
                 }
                 else
                 {

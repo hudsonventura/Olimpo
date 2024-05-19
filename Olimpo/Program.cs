@@ -1,8 +1,11 @@
-﻿using System.Reflection;
+﻿using Olimpo;
+using Olimpo.Protocols;
+using Olimpo.Domain;
+
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
-using Olimpo;
-using Olimpo.Plugins;
 using Spectre.Console;
+
 
 public class Program
 {
@@ -11,7 +14,7 @@ public class Program
 
     static (Ativo, Result)[] results;
 
-    static Table table = new Table().Centered();
+    static Layout layout;
 
     public static async Task Main(string[] args)
     {
@@ -21,29 +24,190 @@ public class Program
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{env}.json", optional: true)
             .Build();
-
- 
-
-        table = new Table().Centered();
-        table.Title("[yellow]Título da Tabela[/]");
-        table.AddColumn("Name");
-        table.AddColumn("Host");
-        table.AddColumn("Protocol");
-        table.AddColumn("Port");
-        table.AddColumn("Latency");
-        table.AddColumn("Status");
-
-
-        
-        while(true){
-            Task taskData = Task.Run(() => ObtainValues());
-            Task taskTable = Task.Run(() => ShowTable());
-            await Task.Delay(1000);
-
-
+        ativos = appsettings.GetSection("ativos").Get<List<Ativo>>();
+        results = new (Ativo, Result)[ativos.Count];
+        for (int i = 0; i < ativos.Count; i++)
+        {
+            results[i] = (ativos[i], new Result(){ Message = "Not verified yet"});
         }
 
+        var stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
+
+        foreach (var stack in stacks)
+        {
+            foreach (var service in stack.services)
+            {
+                foreach (var sensor in service.sensors)
+                {
+                    Task task = Task.Run(() => LoopMetricCheck(sensor, service, 1000));
+                    Task.WaitAll(task);
+                }
+            }
+            
+        }
+
+        while(true){
+            Thread.Sleep(1000);
+        }
+
+        Task taskData = Task.Run(() => ObtainValues());
+
+
+
+        // Create the layout
+        layout = new Layout("Root")
+            .SplitColumns(
+                new Layout("Stacks").Ratio(9),
+                new Layout("Right")
+                    .SplitRows(
+                        new Layout("Top"),
+                        new Layout("Bottom")));
+    
+
+
+        await AnsiConsole.Live(layout)
+            .StartAsync(async ctx => 
+            {
+                while(true){
+                    ShowTable();
+                    ctx.Refresh();
+                    await Task.Delay(1000);   
+                }
+                      
+            });
+        
+
     }
+
+    private static async void LoopMetricCheck(Sensor sensor, Service service, int wait)
+    {
+        string targetNamespace = "Olimpo.Protocols";
+        string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;;
+        string nomeCompletoDaClasse = $"{targetNamespace}.{sensor.type.ToUpper()}";
+        Assembly assembly = Assembly.Load(targetAssemblyName);
+
+
+        var  fullClassName  = assembly.GetType(nomeCompletoDaClasse);
+        Type type = fullClassName;
+        object instance;
+
+        try
+        {
+            instance = Activator.CreateInstance(type);
+        }
+        catch (System.Exception error)
+        {
+            sensor.metrics.Add(new Metric(){
+                id = Guid.NewGuid(),
+                value = -1,
+                datetime = DateTime.Now,
+                error_code = 1,
+                message = $"The type {sensor.type.ToString()} was not implemented yet"
+            });
+            return;
+        }
+
+        MethodInfo method;
+        try
+        {
+            method = type.GetMethod("Test");
+        }
+        catch (System.Exception)
+        {
+            sensor.metrics.Add(new Metric(){
+                id = Guid.NewGuid(),
+                value = -1,
+                datetime = DateTime.Now,
+                error_code = 3,
+                message = $"The method Test was not implemented at class {sensor.type.ToString()}"
+            });
+            return;
+        }
+
+        
+        
+
+        while(true){
+            Console.WriteLine($"Check! {service.name}");
+            Metric metric = await GetMetric(sensor, service, instance, method);
+            sensor.metrics.Add(metric);
+            Thread.Sleep(wait);
+        }
+    }
+
+
+    private static async Task<Metric> GetMetric(Sensor sensor, Service service, object instance, MethodInfo method){
+        
+        try
+        {
+            var result_task = method.Invoke(instance, new object[] { service, sensor });
+            // Converte o retorno para o tipo esperado, por exemplo, string
+            if (result_task is Task task)
+            {
+                await task; // Aguarda a conclusão da tarefa
+
+                // Se o método retornar Task<T>, você pode acessar o resultado com reflection
+                if (result_task.GetType().IsGenericType)
+                {
+                    var resultProperty = result_task.GetType().GetProperty("Result");
+                    dynamic result = resultProperty.GetValue(result_task);
+
+                    return new Metric(){
+                        id = Guid.NewGuid(),
+                        value = (decimal) result.Value,
+                        latency = result.Latency,
+                        datetime = DateTime.Now,
+                        error_code = 0,
+                        message = "Success"
+                    };
+                }
+            }
+            return new Metric(){
+                id = Guid.NewGuid(),
+                value = -1,
+                datetime = DateTime.Now,
+                error_code = 6,
+                message = "I can't get the correct value"
+            };
+        }
+        catch (TargetInvocationException error)
+        {
+            return new Metric(){
+                id = Guid.NewGuid(),
+                value = -1,
+                datetime = DateTime.Now,
+                error_code = 5,
+                message = error.Message
+            };
+        }
+        catch (Exception error)
+        {
+            return new Metric(){ 
+                id = Guid.NewGuid(),
+                value = -1,
+                datetime = DateTime.Now,
+                error_code = 5,
+                message = error.Message
+            };
+        }
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -51,51 +215,72 @@ public class Program
 
 
     static async void ObtainValues(){
-        ativos = appsettings.GetSection("ativos").Get<List<Ativo>>();
-        results = new (Ativo, Result)[ativos.Count];
-        for (int i = 0; i < ativos.Count; i++)
-        {
-            var result = await CheckHost(ativos[i]);
-            results[i] = (ativos[i], result);
+        while(true){
+            for (int i = 0; i < ativos.Count; i++)
+            {
+                var result = await CheckHost(ativos[i]);
+                results[i] = (ativos[i], result);
+            }
+            await Task.Delay(3000);
         }
     }
 
-    static async void ShowTable(){
-        if(results == null || results.Length == 0){
-            return;
-        }
+    static async void ShowTable()
+    {
+        Tree root = new Tree("Stacks");
 
- 
-        var results_internal = results;
+        var stack = root.AddNode("[bold][blue][[Titulo Stack]][/][/]");
+
+        var grid = new Grid();
+    
+        // Add columns 
+        grid.AddColumn().Width(150);
+        grid.AddColumn().Width(200);
+        grid.AddColumn().Width(50);
+        grid.AddColumn().Width(50);
+        grid.AddColumn().Width(70);
+        grid.AddColumn().Width(400);
+
+        // Add header row 
+        grid.AddRow(new Text[]{
+            new Text("Service", new Style(Color.Blue, Color.Black)).LeftJustified(),
+            new Text("Host", new Style(Color.Blue, Color.Black)).LeftJustified(),
+            new Text("Protocol", new Style(Color.Blue, Color.Black)).LeftJustified(),
+            new Text("Port", new Style(Color.Blue, Color.Black)).LeftJustified(),
+            new Text("Latency", new Style(Color.Blue, Color.Black)).LeftJustified(),
+            new Text("Status", new Style(Color.Blue, Color.Black)).LeftJustified()
+        });
 
         
-        table.Rows.Clear();
-        foreach (var (ativo, result) in results_internal)
+
+        foreach (var (ativo, result) in results)
         {
-            if(ativo == null || result == null){
-                continue;
-            }
-            var color = (result.Latency == -1) ? "red" : result.Latency < 50 ? "green" : result.Latency < 100 ? "yellow" : "red";
+            var color = (result.Latency == -1) ? "red" : result.Latency < 50 ? new Style(Color.Green) : result.Latency < 100 ? new Style(Color.Yellow) : new Style(Color.Red);
             var value = (result.Latency == -1) ? "-" : result.Latency.ToString()+"ms";
+        
+            // Add content row 
+            grid.AddRow(new Text[]{
+                new Text(ativo.name).LeftJustified(),
+                new Text(ativo.host).LeftJustified(),
+                new Text(ativo.type.ToString()).LeftJustified(),
+                new Text(ativo.port.ToString()).LeftJustified(),
+                new Text(value, color).LeftJustified(),
+                new Text(result.Message, color).LeftJustified(),
+            });
+        }
+        stack.AddNode(grid);
+        
+ 
 
-            table.AddRow(ativo.name, ativo.host, ativo.type.ToString(), ativo.port.ToString(), $"[{color}]{value}[/]", $"[{color}]{result.Message}[/]");
-        }
-        try
-        {
-            
-            AnsiConsole.Clear();
-        }
-        catch (System.Exception)
-        {
-            
-        }
-        AnsiConsole.Write(table);
-
+        // Update the Stacks column
+        layout["Stacks"].Update(
+            new Panel(root)
+                .Expand());
     }
 
     static async Task<Result> CheckHost(Ativo ativo)
     {
-        string targetNamespace = "Olimpo.Plugins";
+        string targetNamespace = "Olimpo.Protocols";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;;
         string nomeCompletoDaClasse = $"{targetNamespace}.{ativo.type.ToUpperInvariant()}";
         Assembly assembly = Assembly.Load(targetAssemblyName);
@@ -110,7 +295,7 @@ public class Program
         }
         catch (System.Exception error)
         {
-            return new Result(){ Latency = -1, Message = $"The type {ativo.type.ToString()} was not implemented yet"};
+            return new Result(){ Message = $"The type {ativo.type.ToString()} was not implemented yet"};
         }
 
         try
@@ -138,13 +323,13 @@ public class Program
         }
         catch (TargetInvocationException error)
         {
-            return new Result(){ Latency = -1, Message = error.Message};
+            return new Result(){ Message = error.Message};
         }
         catch (Exception error)
         {
-            return new Result(){ Latency = -1, Message = error.Message};
+            return new Result(){ Message = error.Message};
         }
-        return new Result(){ Latency = -1, Message = $"Something wrong was happend. Revisit the code on Program.cs"};
+        return new Result(){ Message = $"Something wrong was happend. Revisit the code on Program.cs"};
     }
 
 }
