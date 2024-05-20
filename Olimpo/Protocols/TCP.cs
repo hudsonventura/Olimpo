@@ -7,6 +7,11 @@ namespace Olimpo.Protocols;
 public class TCP : ISensorType
 {
 
+    public string GetUnit()
+    {
+        return "ms";
+    }
+    
     public async Task<Result> Test(Service service, Sensor sensor)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();

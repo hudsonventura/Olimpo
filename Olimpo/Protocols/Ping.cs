@@ -5,6 +5,12 @@ namespace Olimpo.Protocols;
 
 public class PING : ISensorType
 {
+
+    public string GetUnit()
+    {
+        return "ms";
+    }
+
     public async Task<Result> Test(Service service, Sensor sensor)
     {
         var ping = new System.Net.NetworkInformation.Ping();
