@@ -1,9 +1,9 @@
 using Olimpo;
 using Olimpo.Domain;
 
-namespace Olimpo.Protocols;
+namespace Olimpo.Sensors;
 
-public interface ISensorType
+public interface ISensor
 {
     public Task<Result> Test(Service service, Sensor sensor);
 

@@ -1,5 +1,5 @@
 ﻿using Olimpo;
-using Olimpo.Protocols;
+using Olimpo.Sensors;
 using Olimpo.Domain;
 
 using System.Reflection;
@@ -9,23 +9,17 @@ using Spectre.Console;
 
 public class Program
 {
-    static IConfiguration appsettings;
-    static List<Ativo> ativos;
-
-    static (Ativo, Result)[] results;
-
-    static Layout layout;
-
+    static List<Stack> stacks;
     public static async Task Main(string[] args)
     {
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        appsettings = new ConfigurationBuilder()
+        IConfiguration appsettings = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{env}.json", optional: true)
             .Build();
 
-        var stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
+        stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
 
 
         //star threads to check each sensor
@@ -36,47 +30,44 @@ public class Program
                 foreach (var sensor in service.sensors)
                 {
                     Task task = Task.Run(() => LoopMetricCheck(sensor, service));
-                    Task.WaitAll(task);
+                    //Task.WaitAll(task);
                 }
             }
             
         }
 
-        while(true){
-            Thread.Sleep(1000);
-        }
 
 
+
+        
 
 
         // Create the layout
-        layout = new Layout("Root")
+        Layout layout = new Layout("Root")
             .SplitColumns(
-                new Layout("Stacks").Ratio(9),
-                new Layout("Right")
-                    .SplitRows(
+                new Layout("Stacks").Ratio(9).SplitRows(
                         new Layout("Top"),
                         new Layout("Bottom")));
-    
+                    
+        layout["Bottom"].Size(3);
+        layout["Bottom"].Update(
+            new Panel(
+                Align.Center(
+                    new Markup("Hello [blue]World![/]")
+                )
+            )
+        );
 
-
-        await AnsiConsole.Live(layout)
-            .StartAsync(async ctx => 
-            {
-                while(true){
-                    //ShowTable(stacks);
-                    ctx.Refresh();
-                    await Task.Delay(1000);   
-                }
-                      
-            });
-        
+        while(true){
+            ShowConsole(layout);
+            Thread.Sleep(3000);
+        }
 
     }
 
     private static async void LoopMetricCheck(Sensor sensor, Service service)
     {
-        string targetNamespace = "Olimpo.Protocols";
+        string targetNamespace = "Olimpo.Sensors";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;;
         string nomeCompletoDaClasse = $"{targetNamespace}.{sensor.type.ToUpper()}";
         Assembly assembly = Assembly.Load(targetAssemblyName);
@@ -128,7 +119,7 @@ public class Program
             Metric metric = await GetMetric(sensor, service, instance, testMethod);
             metric.unit = GetUnit(instance, unitMethod);
             sensor.metrics.Add(metric);
-            Console.WriteLine($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff")}  - Checked service '{service.name}' sensor '{sensor.name}': Value {metric.value}{metric.unit} and Latency {metric.latency}ms");
+            //Console.WriteLine($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff")}  - Checked service '{service.name}' sensor '{sensor.name}': Value {metric.value}{metric.unit} and Latency {metric.latency}ms");
             Thread.Sleep(sensor.check_each);
         }
     }
@@ -161,7 +152,7 @@ public class Program
                         latency = result.Latency,
                         datetime = DateTime.Now,
                         error_code = 0,
-                        message = "Success"
+                        message = result.Message
                     };
                 }
             }
@@ -216,59 +207,98 @@ public class Program
 
 
 
-    static async void ShowTable(List<Stack> stacks)
+    static async void ShowConsole(Layout layout)
     {
         Tree root = new Tree("Stacks");
+        
 
         foreach (var stack in stacks)
         {
-            var stackNode = root.AddNode("[bold][blue][[Titulo Stack]][/][/]");
+            var stackNode = root.AddNode($"[bold][blue][[{stack.name}]][/][/]");
 
-            var grid = new Grid();
+            
         
-            // Add columns 
-            grid.AddColumn().Width(150);
-            grid.AddColumn().Width(200);
-            grid.AddColumn().Width(50);
-            grid.AddColumn().Width(50);
-            grid.AddColumn().Width(70);
-            grid.AddColumn().Width(400);
+            
 
             foreach (var service in stack.services)
             {
+                
+
+                // Create sendor grid 
+                var grid = new Grid();
+                grid.AddColumn().Width(150);
+                grid.AddColumn().Width(200);
+                grid.AddColumn().Width(50);
+                grid.AddColumn().Width(50);
+                grid.AddColumn().Width(70);
+                grid.AddColumn().Width(70);
+                grid.AddColumn().Width(400);
+
                 // Add header row 
                 grid.AddRow(new Text[]{
-                    new Text("Service", new Style(Color.Blue, Color.Black)).LeftJustified(),
+                    new Text("Sensor", new Style(Color.Blue, Color.Black)).LeftJustified(),
                     new Text("Host", new Style(Color.Blue, Color.Black)).LeftJustified(),
                     new Text("Protocol", new Style(Color.Blue, Color.Black)).LeftJustified(),
                     new Text("Port", new Style(Color.Blue, Color.Black)).LeftJustified(),
                     new Text("Latency", new Style(Color.Blue, Color.Black)).LeftJustified(),
+                    new Text("Value", new Style(Color.Blue, Color.Black)).LeftJustified(),
                     new Text("Status", new Style(Color.Blue, Color.Black)).LeftJustified()
                 });
-
+                
                 foreach (var sensor in service.sensors)
                 {
-                    Metric metric = sensor.metrics.LastOrDefault();
+                    
 
-                    var color = (metric.value == -1) ? "red" : metric.value < 50 ? new Style(Color.Green) : metric.value < 100 ? new Style(Color.Yellow) : new Style(Color.Red);
-                    var value = (metric.value == -1) ? "-" : $"{metric.value.ToString()}{metric.unit}";
+                    Metric metric = sensor.metrics.LastOrDefault();
+                    if(metric == null){
+                        metric = new Metric(){
+                            datetime = DateTime.Now
+                        };
+                    }
+
+                    Style color = Color.Green;
+                    color = (metric.value == -1) ? new Style(Color.Red) : metric.value > 100 ? new Style(Color.Red) : metric.value >= 50 ? new Style(Color.Yellow) : new Style(Color.Green);
+
+                    if(sensor.alerts != null){
+                        switch (sensor.alerts.type)
+                        {
+                            case Alert.Type.exact: color = (metric.value == sensor.alerts.critical) ? new Style(Color.Red) : metric.value == sensor.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Green);
+                            break;
+
+                            //TODO: implementar lower_better
+                            case Alert.Type.lower_better: color = (metric.value == -1) ? new Style(Color.Red) : metric.value <= sensor.alerts.success ? new Style(Color.Green) : metric.value <= sensor.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Red);
+                            break;
+
+                            //TODO: implementar upper_better
+                            case Alert.Type.upper_better: color = (metric.value == -1) ? new Style(Color.Red) : metric.value < 50 ? new Style(Color.Red) : metric.value < 100 ? new Style(Color.Yellow) : new Style(Color.Red);
+                            break;
+
+                            default: break;
+                        }
+                    }
+                    
+                    var value = (metric.value == -1) ? "-" : metric.value.ToString();
                 
                     // Add content row 
                     grid.AddRow(new Text[]{
                         new Text(sensor.name).LeftJustified(),
-                        new Text(service.host).LeftJustified(),
+                        new Text(".").LeftJustified(),
                         new Text(sensor.type.ToString()).LeftJustified(),
                         new Text(sensor.port.ToString()).LeftJustified(),
-                        new Text(value, color).LeftJustified(),
+                        new Text(metric.latency.ToString()+"ms").LeftJustified(),
+                        new Text(value.ToString()+metric.unit, color).LeftJustified(),
                         new Text(metric.message, color).LeftJustified(),
                     });
                 }
-                stackNode.AddNode(grid);
+                var serviceNode = stackNode.AddNode($"{service.name} - {service.host}");
+                serviceNode.AddNode(grid);
             }
+            ;
             // Update the Stacks column
-            layout["Stacks"].Update(
-                new Panel(root)
-                    .Expand());
+            layout["Top"].Update(
+                 new Panel(root)
+                     .Expand());
+            AnsiConsole.Write(layout);
         }
 
         

@@ -2,9 +2,9 @@ using System.Net.Sockets;
 using Olimpo;
 using Olimpo.Domain;
 
-namespace Olimpo.Protocols;
+namespace Olimpo.Sensors;
 
-public class TCP : ISensorType
+public class TCP : ISensor
 {
 
     public string GetUnit()

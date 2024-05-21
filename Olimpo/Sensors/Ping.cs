@@ -1,9 +1,7 @@
-
 using Olimpo.Domain;
+namespace Olimpo.Sensors;
 
-namespace Olimpo.Protocols;
-
-public class PING : ISensorType
+public class PING : ISensor
 {
 
     public string GetUnit()
