@@ -6,12 +6,17 @@ namespace Olimpo.Sensors;
 
 public class SSH_MEMORY_FREE : ISensor
 {
+    public List<Channel> GenChannels(Sensor sensor)
+    {
+        return null;
+    }
+
     public string GetUnit()
     {
         return "GB";
     }
 
-    public async Task<Result> Test(Service service, Sensor sensor)
+    public async Task<Metric> Test(Service service, Sensor sensor)
     {
         string command = @"free -k | awk '/Mem:/ {printf "" %.2f"", $7/1024/1024}'";
 
@@ -29,10 +34,10 @@ public class SSH_MEMORY_FREE : ISensor
 
                     string numberWithoutComma = commandResult.Result.Replace(".", ",");
 
-                    return new Result(){
-                        Latency = stopwatch.ElapsedMilliseconds,
-                        Message = "Ok",
-                        Value = decimal.Parse(numberWithoutComma)
+                    return new Metric(){
+                        latency = stopwatch.ElapsedMilliseconds,
+                        message = "Ok",
+                        value = decimal.Parse(numberWithoutComma)
                     };
                 }
                 else
@@ -49,8 +54,6 @@ public class SSH_MEMORY_FREE : ISensor
                 client.Disconnect();
             }
         }
-        return new Result(){
-                        Message = "SSH was not executed"
-                    };
+        return new Metric(){ message = "SSH was not executed" };
     }
 }

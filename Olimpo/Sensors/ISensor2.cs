@@ -3,9 +3,9 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
-public interface ISensor
+public interface ISensor2
 {
-    public Task<Metric> Test(Service service, Sensor sensor);
+    public Task<Sensor> Test(Service service, Sensor sensor);
 
     public List<Channel> GenChannels(Sensor sensor);
 }

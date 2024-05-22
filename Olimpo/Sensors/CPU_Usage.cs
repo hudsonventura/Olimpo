@@ -2,7 +2,7 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
-public class CPU_TEMP : ISensor
+public class CPU_USAGE : ISensor
 {
     public List<Channel> GenChannels(Sensor sensor)
     {
@@ -11,16 +11,16 @@ public class CPU_TEMP : ISensor
 
     public string GetUnit()
     {
-        return "ºC";
+        return "%";
     }
 
     public async Task<Metric> Test(Service service, Sensor sensor)
     {
         //read info
-
+        Random rand = new Random();
         return new Metric(){
             latency  = 0,
-            value = 37,
+            value = rand.Next(0, 100),
             message = "Got ok"
         };
     }

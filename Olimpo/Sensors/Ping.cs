@@ -1,17 +1,13 @@
 using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
-public class PING : ISensor
+public class PING : SensorGenDefaultChannel, ISensor2
 {
-
-    public string GetUnit()
-    {
-        return "ms";
-    }
-
-    public async Task<Result> Test(Service service, Sensor sensor)
+    public async Task<Sensor> Test(Service service, Sensor sensor)
     {
         var ping = new System.Net.NetworkInformation.Ping();
+
+        Metric result = null;
 
         System.Net.NetworkInformation.PingReply pingReply;
         try
@@ -27,18 +23,20 @@ public class PING : ISensor
                     // A operação de ping completou dentro do tempo limite
                     pingReply = await task;
                     bool isPingSuccess = pingReply.Status == System.Net.NetworkInformation.IPStatus.Success;
-                    return new Result() { Message = "Success", Latency = pingReply.RoundtripTime, Value = pingReply.RoundtripTime };
+                    result = new Metric() { message = "Success", latency = pingReply.RoundtripTime, value = pingReply.RoundtripTime };
                 }
                 else
                 {
                     // A operação de ping foi cancelada devido ao timeout
-                    return new Result() { Message = "Ping timeout" };
+                    result = new Metric() { message = "Ping timeout" };
                 }
             }
         }
         catch (System.Exception error)
         {
-            return new Result() { Message = error.Message };
+            result = new Metric() { message = error.Message };
         }
+        sensor.channels[0].metric = result;
+        return sensor;
     }
 }

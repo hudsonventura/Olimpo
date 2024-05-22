@@ -2,16 +2,11 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
-public class HTTP : ISensor
+public class HTTP : SensorGenDefaultChannel, ISensor2
 {
-    public string GetUnit()
+    public async Task<Sensor> Test(Service service, Sensor sensor)
     {
-        return "";
-    }
-
-    public async Task<Result> Test(Service service, Sensor sensor)
-    {
-
+        Metric result = null;
         // Criação do HttpClient
         using (HttpClient client = new HttpClient())
         {
@@ -19,21 +14,23 @@ public class HTTP : ISensor
             try
             {
                 HttpResponseMessage response = await client.GetAsync($"http://{service.host}:{sensor.port}");
-                return new Result(){
-                    Message = response.StatusCode.ToString(),
-                    Value = (long)response.StatusCode,
-                    Latency = stopwatch.ElapsedMilliseconds
+                result = new Metric(){
+                    message = response.StatusCode.ToString(),
+                    value = (long)response.StatusCode,
+                    latency = stopwatch.ElapsedMilliseconds
                 };
             }
             catch (Exception error)
             {
-                return new Result(){
-                    Message = error.Message,
-                    Latency = stopwatch.ElapsedMilliseconds
+                result = new Metric(){
+                    message = error.Message,
+                    latency = stopwatch.ElapsedMilliseconds
                 };
             }finally{
                 stopwatch.Stop();
             }
+            sensor.channels[0].metric = result;
+            return sensor;
         }
     }
 }

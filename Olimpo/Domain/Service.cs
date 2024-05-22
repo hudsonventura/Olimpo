@@ -1,3 +1,5 @@
+using Olimpo.Sensors;
+
 namespace Olimpo.Domain;
 
 public class Service
