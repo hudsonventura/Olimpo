@@ -12,7 +12,7 @@ public class APIController : ControllerBase
         
     }
 
-    [HttpGet("/")]
+    [HttpGet("/Api/")]
     public ActionResult Get()
     {
         return Ok();

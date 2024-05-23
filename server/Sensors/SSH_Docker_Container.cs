@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 using Olimpo.Domain;
 using Renci.SshNet;
@@ -13,7 +11,7 @@ public class SSH_DOCKER_CONTAINER : ISensor2
     {
         string command = $"sudo -S docker stats torrent --no-stream --format \"{{{{.MemUsage}}}}\"";
 
-        var connectionInfo = new ConnectionInfo(service.host, sensor.username,
+        var connectionInfo = new Renci.SshNet.ConnectionInfo(service.host, sensor.username,
                 new PasswordAuthenticationMethod(sensor.username, sensor.password));
 
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();

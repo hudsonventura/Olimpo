@@ -1,6 +1,8 @@
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
+using Olimpo;
+using Olimpo.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,5 +35,40 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+
+
+
+
+
+
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+IConfiguration appsettings = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{env}.json", optional: true)
+    .Build();
+
+List<Stack> stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
+
+
+//star threads to check each sensor
+SensorsChecker.StartLoopChecker(stacks);
+
+while(true){
+    ConsoleExhibitor.Show(stacks);
+    Thread.Sleep(3000);
+}
+
+
+
+
+
+
+
+
+
+
 
 app.Run();
