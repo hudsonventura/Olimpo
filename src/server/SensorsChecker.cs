@@ -39,13 +39,18 @@ public class SensorsChecker
         }
         catch (System.Exception error)
         {
-            sensor.metrics.Add(new Metric(){
+            Metric metric_fake = new Metric(){
                 id = Guid.NewGuid(),
                 value = -1,
                 datetime = DateTime.Now,
-                error_code = 1,
+                error_code = 3,
                 message = $"The type {sensor.type.ToString()} was not implemented yet"
-            });
+            };
+            Channel channel_fake = new Channel(){
+                name = "Not checked",
+                metric = metric_fake
+            };
+            sensor.channels.Add(channel_fake);
             return;
         }
 
@@ -60,13 +65,18 @@ public class SensorsChecker
         }
         catch (System.Exception)
         {
-            sensor.metrics.Add(new Metric(){
+            Metric metric_fake = new Metric(){
                 id = Guid.NewGuid(),
                 value = -1,
                 datetime = DateTime.Now,
                 error_code = 3,
                 message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
-            });
+            };
+            Channel channel_fake = new Channel(){
+                name = "Not checked",
+                metric = metric_fake
+            };
+            sensor.channels.Add(channel_fake);
             return;
         }
 

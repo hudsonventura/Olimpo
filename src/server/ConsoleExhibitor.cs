@@ -75,17 +75,17 @@ public class ConsoleExhibitor
                             };
                         }
 
-                        Style color = Color.Green;
-                        color = (metric.value == -1) ? new Style(Color.Red) : metric.value > 100 ? new Style(Color.Red) : metric.value >= 50 ? new Style(Color.Yellow) : new Style(Color.Green);
+                        Style color = null;
+                        //color = (metric.value == -1) ? new Style(Color.Red) : metric.value > 100 ? new Style(Color.Red) : metric.value >= 50 ? new Style(Color.Yellow) : new Style(Color.Green);
 
-                        if(sensor.alerts != null){
-                            switch (sensor.alerts.type)
+                        if(channel.alerts != null){
+                            switch (channel.alerts.type)
                             {
-                                case Alert.Type.exact: color = (metric.value == sensor.alerts.critical) ? new Style(Color.Red) : metric.value == sensor.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Green);
+                                case Alert.Type.exact: color = (metric.value == channel.alerts.critical) ? new Style(Color.Red) : metric.value == channel.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Green);
                                 break;
 
                                 //TODO: implementar lower_better
-                                case Alert.Type.lower_better: color = (metric.value == -1) ? new Style(Color.Red) : metric.value <= sensor.alerts.success ? new Style(Color.Green) : metric.value <= sensor.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Red);
+                                case Alert.Type.lower_better: color = (metric.value == -1) ? new Style(Color.Red) : metric.value <= channel.alerts.success ? new Style(Color.Green) : metric.value <= channel.alerts.warning ? new Style(Color.Yellow) : new Style(Color.Red);
                                 break;
 
                                 //TODO: implementar upper_better

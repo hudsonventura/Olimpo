@@ -21,10 +21,6 @@ public partial class Sensor
     public int check_each { get; set; } = 1000; //re-check the sensor each a num of milliseconds. Default is 1000 seconds
 
     
-    public Alert alerts { get; set; }
-
-    
-    public List<Metric> metrics { get; set; } = new List<Metric>();
 
     public List<Channel> channels { get; set; } = new List<Channel>();
 
