@@ -1,4 +1,2 @@
-Olimpo/bin/*
-Olimpo/obj/*
-server/bin/*
-server/obj/*
+src/server/bin/*
+src/server/obj/*

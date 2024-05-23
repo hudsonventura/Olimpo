@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/server/bin/Debug/net6.0/server.dll",
+            "program": "${workspaceFolder}/src/server/bin/Debug/net6.0/server.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/server/",
+            "cwd": "${workspaceFolder}/src/server/",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -23,23 +23,7 @@
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
-            },
-            "launchBrowser": {
-                "enabled": true,
-                "args": "https://localhost:5001/swagger/index.html"
-            },
-        },
-        {
-            "name": ".NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/Olimpo/bin/Debug/net6.0/Olimpo.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/Olimpo/",
-            "stopAtEntry": false,
-            "console": "internalConsole"
+            }
         }
-
     ]
 }
