@@ -12,17 +12,19 @@ public class ConsoleExhibitor
         Layout layout = new Layout("Root")
             .SplitColumns(
                 new Layout("Stacks").Ratio(9).SplitRows(
-                        new Layout("Top"),
-                        new Layout("Bottom")));
+                        new Layout("Top")
+                        //, new Layout("Bottom")
+                )
+            );
                     
-        layout["Bottom"].Size(3);
+        /* layout["Bottom"].Size(3);
         layout["Bottom"].Update(
             new Panel(
                 Align.Center(
                     new Markup("Hello [blue]World![/]")
                 )
             )
-        );
+        ); */
 
         Tree root = new Tree("Stacks");
         
@@ -108,7 +110,7 @@ public class ConsoleExhibitor
                         });
                     }
                 }
-                var serviceNode = stackNode.AddNode($"{service.name} - {service.host}");
+                var serviceNode = stackNode.AddNode(new Text($"{service.name} - {service.host}", new Style(Color.Blue, Color.Black)));
                 serviceNode.AddNode(grid);
             }
             ;
