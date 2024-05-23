@@ -20,11 +20,22 @@ public class Context : DbContext
 
 
 
-    public DbSet<Alert> alerts { get; set; }
 
-    public DbSet<Metric> metrics { get; set; }
+    public DbSet<Stack> stacks { get; set; }
 
-    public DbSet<Channel> channels { get; set; }
+        public DbSet<Service> services { get; set; }
 
-    public DbSet<Sensor> sensors { get; set; }
+            public DbSet<Sensor> sensors { get; set; }
+
+                public DbSet<Channel> channels { get; set; }
+    
+                    public DbSet<Alert> alerts { get; set; }
+
+                    public DbSet<Metric> metrics { get; set; }
+
+    
+
+    
+
+    
 }

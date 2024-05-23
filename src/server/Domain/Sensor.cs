@@ -11,7 +11,6 @@ public partial class Sensor
 
     public string type { get; set; }
 
-    public int channel { get; set; } = 1;
     public int port { get; set; }
     public int timeout { get; set; } // in milliseconds
 
