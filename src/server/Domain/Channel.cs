@@ -8,7 +8,7 @@ public class Channel
 
     public string name { get; set; }
 
-    public Alert alerts { get; set; }
+    public Alert? alerts { get; set; }
 
     public Metric metric { get; set; } = new Metric();
 }

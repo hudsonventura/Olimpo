@@ -3,6 +3,7 @@ using System.Reflection;
 
 using Olimpo;
 using Olimpo.Domain;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
