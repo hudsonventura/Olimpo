@@ -5,10 +5,6 @@ using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
 
-partial class Sensor{
-    public bool SSL_Verification_Check { get; set; } = true;
-}
-
 public class HTTPS : SensorGenDefaultChannel, ISensor2
 {
     public List<Channel> GenChannels(Sensor sensor)
@@ -77,8 +73,8 @@ public class HTTPS : SensorGenDefaultChannel, ISensor2
             }finally{
                 stopwatch.Stop();
             }
-            sensor.channels[0].metric = result;
-            sensor.channels[1].metric = new Metric(){
+            sensor.channels[0].current_metric = result;
+            sensor.channels[1].current_metric = new Metric(){
                 message = "OK",
                 value = (expirationDate - DateTime.UtcNow).Days,
                 unit = Sensor.MetricUnit.Days.ToString(),

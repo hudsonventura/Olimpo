@@ -36,7 +36,7 @@ public class PING : SensorGenDefaultChannel, ISensor2
         {
             result = new Metric() { message = error.Message };
         }
-        sensor.channels[0].metric = result;
+        sensor.channels[0].current_metric = result;
         return sensor;
     }
 }

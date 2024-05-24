@@ -48,7 +48,7 @@ public class SensorsChecker
             };
             Channel channel_fake = new Channel(){
                 name = "Not checked",
-                metric = metric_fake
+                current_metric = metric_fake
             };
             sensor.channels.Add(channel_fake);
             return;
@@ -74,7 +74,7 @@ public class SensorsChecker
             };
             Channel channel_fake = new Channel(){
                 name = "Not checked",
-                metric = metric_fake
+                current_metric = metric_fake
             };
             sensor.channels.Add(channel_fake);
             return;
@@ -115,7 +115,7 @@ public class SensorsChecker
         catch (TargetInvocationException error)
         {
             sensor.channels.ForEach(x => {
-                x.metric = new Metric(){
+                x.current_metric = new Metric(){
                     message = error.Message,
                     error_code = 5,
                     datetime = DateTime.Now,
@@ -129,7 +129,7 @@ public class SensorsChecker
                 return sensor;
             }
             sensor.channels.ForEach(x => {
-                x.metric = new Metric(){
+                x.current_metric = new Metric(){
                     message = error.Message,
                     error_code = 5,
                     datetime = DateTime.Now,

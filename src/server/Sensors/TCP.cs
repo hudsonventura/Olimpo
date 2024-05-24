@@ -24,7 +24,9 @@ public class TCP : ISensor
         {
             using (TcpClient client = new TcpClient())
             {
-                var connectTask = client.ConnectAsync(service.host, sensor.port);
+                string host = (service.host != null) ? service.host : "localhost";
+
+                var connectTask = client.ConnectAsync(service.host, (int)sensor.port);
                 var timeoutTask = Task.Delay(sensor.timeout); // Timeout of 5 seconds
                 var completedTask = await Task.WhenAny(connectTask, timeoutTask);
                 if (completedTask == timeoutTask)

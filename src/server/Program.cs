@@ -53,9 +53,12 @@ IConfiguration appsettings = new ConfigurationBuilder()
 
 List<Stack> stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
 
+var db = new Context(appsettings);
+var stacks2 = db.stacks.Include(x => x.services).ThenInclude(x => x.sensors);
+
 
 //star threads to check each sensor
-SensorsChecker.StartLoopChecker(stacks);
+SensorsChecker.StartLoopChecker(stacks2);
 
 while(true){
     ConsoleExhibitor.Show(stacks);

@@ -15,5 +15,6 @@ public class Channel
 
     public string unit { get; set; } = String.Empty;
 
-    public Metric metric { get; set; } = new Metric();
+    public Metric current_metric { get; set; } = new Metric();
+    public List<Metric> metrics { get; set; } = new List<Metric>();
 }

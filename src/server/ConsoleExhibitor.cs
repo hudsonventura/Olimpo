@@ -67,7 +67,7 @@ public class ConsoleExhibitor
                     }
                     foreach (var channel in sensor.channels)
                     {
-                        Metric metric = channel.metric;
+                        Metric metric = channel.current_metric;
                         
                         if(metric == null){
                             metric = new Metric(){

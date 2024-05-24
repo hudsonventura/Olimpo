@@ -48,7 +48,7 @@ public class SSH_DOCKER_CONTAINER : ISensor2
 
                     if(values[0] == "0B"){
                         sensor.channels.ForEach(x => {
-                            x.metric = new Metric(){
+                            x.current_metric = new Metric(){
                                 latency = stopwatch.ElapsedMilliseconds,
                                 message = "The container is down or not created",
                                 value = -1
@@ -59,7 +59,7 @@ public class SSH_DOCKER_CONTAINER : ISensor2
 
                     for (int i = 0; i < sensor.channels.Count; i++)
                     {
-                        sensor.channels[i].metric = new Metric(){
+                        sensor.channels[i].current_metric = new Metric(){
                             latency = stopwatch.ElapsedMilliseconds,
                             message = "Ok",
                             value = convertStringToDecimalInBytes(values[i])
@@ -82,7 +82,7 @@ public class SSH_DOCKER_CONTAINER : ISensor2
             }
         }
         sensor.channels.ForEach(x => {
-            x.metric = new Metric(){
+            x.current_metric = new Metric(){
                 latency = stopwatch.ElapsedMilliseconds,
                 message = "Timeout",
             };

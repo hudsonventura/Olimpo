@@ -29,7 +29,7 @@ public class HTTP : SensorGenDefaultChannel, ISensor2
             }finally{
                 stopwatch.Stop();
             }
-            sensor.channels[0].metric = result;
+            sensor.channels[0].current_metric = result;
             return sensor;
         }
     }
