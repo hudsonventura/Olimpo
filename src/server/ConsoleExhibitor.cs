@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Olimpo.Domain;
 using Olimpo.Sensors;
 using Spectre.Console;
@@ -6,8 +7,8 @@ namespace Olimpo;
 
 public class ConsoleExhibitor
 {
-    public static void Show(List<Stack> stacks)
-    {
+    public static void Show(List<Stack> stacks){
+
         // Create the layout
         Layout layout = new Layout("Root")
             .SplitColumns(
@@ -48,6 +49,7 @@ public class ConsoleExhibitor
                 grid.AddColumn().Width(50);
                 grid.AddColumn().Width(70);
                 grid.AddColumn().Width(70);
+                grid.AddColumn().Width(70);
                 grid.AddColumn().Width(400);
 
                 // Add header row 
@@ -57,6 +59,7 @@ public class ConsoleExhibitor
                     new Text("Port", new Style(Color.Blue, Color.Black)),
                     new Text("Latency", new Style(Color.Blue, Color.Black)),
                     new Text("Value", new Style(Color.Blue, Color.Black)),
+                    new Text("Last check", new Style(Color.Blue, Color.Black)),
                     new Text("Status", new Style(Color.Blue, Color.Black))
                 });
                 
@@ -96,8 +99,7 @@ public class ConsoleExhibitor
                             }
                         }
                         
-                        var value = (metric.value == -1) ? "-" : Sensor.NumberToCorrectUnit(metric.value, sensor.metric_unit).ToString("0.##");
-                        string unit = (sensor.metric_unit == Sensor.MetricUnit.None) ? "" : sensor.metric_unit.ToString();
+                        var value = (metric.value == -1) ? "-" : metric.value.ToString("0.##");
                     
                         // Add content row 
                         grid.AddRow(new Text[]{
@@ -105,7 +107,8 @@ public class ConsoleExhibitor
                             new Text(sensor.type.ToString()),
                             new Text(sensor.port.ToString()),
                             new Text($"{metric.latency.ToString()} ms"),
-                            new Text($"{value} {unit}", color),
+                            new Text($"{value} {channel.unit}", color),
+                            new Text(metric.datetime.ToString("yyyy/MM/dd HH:mm:ss"), color),
                             new Text(metric.message, color)
                         });
                     }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Olimpo.Domain;
 using Olimpo.Sensors;
 
@@ -6,14 +7,21 @@ namespace Olimpo;
 
 public class SensorsChecker
 {
-    public static void StartLoopChecker(List<Stack> stacks){
+    public static void StartLoopChecker(Context db){
+
+        List<Stack> stacks = db.stacks
+            .Include(x => x.services)
+            .ThenInclude(x => x.sensors)
+            .ThenInclude(x => x.channels)
+            .ToList();
+
         foreach (var stack in stacks)
         {
             foreach (var service in stack.services)
             {
                 foreach (var sensor in service.sensors)
                 {
-                    Task task = Task.Run(() => SensorsChecker.LoopCheck(sensor, service));
+                    Task task = Task.Run(() => SensorsChecker.LoopCheck(db, sensor, service));
                     //Task.WaitAll(task);
                 }
             }
@@ -21,7 +29,7 @@ public class SensorsChecker
         }
     }
 
-    public static async void LoopCheck(Sensor sensor, Service service)
+    public static async void LoopCheck(Context db, Sensor sensor, Service service)
     {
         string targetNamespace = "Olimpo.Sensors";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -55,46 +63,81 @@ public class SensorsChecker
         }
 
         MethodInfo testMethod;
-        MethodInfo unitMethod;
-        MethodInfo genChannelMethod;
         try
         {
             testMethod = type.GetMethod("Test");
-            unitMethod = type.GetMethod("GetUnit");
-            genChannelMethod = type.GetMethod("GenChannels");
         }
         catch (System.Exception)
         {
-            Metric metric_fake = new Metric(){
-                id = Guid.NewGuid(),
-                value = -1,
-                datetime = DateTime.Now,
-                error_code = 3,
-                message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
-            };
             Channel channel_fake = new Channel(){
                 name = "Not checked",
-                current_metric = metric_fake
+                current_metric = new Metric(){
+                    id = Guid.NewGuid(),
+                    value = -1,
+                    datetime = DateTime.Now,
+                    error_code = 3,
+                    message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
+                }
             };
+
             sensor.channels.Add(channel_fake);
             return;
         }
 
-        List<Olimpo.Domain.Channel> channels = (List<Olimpo.Domain.Channel>) genChannelMethod.Invoke(instance, new object[] { sensor });
-
-        
+      
 
         while(true){
-            sensor.channels = channels;
-            sensor = await GetMetric(sensor, service, instance, testMethod);
+            //sensor.channels = channels;
+            var new_channels = await GetMetric(sensor, service, instance, testMethod);
+
+
+            foreach (var new_channel in new_channels)
+            {
+                var channel = sensor.channels.Where(x => x.channel_id == new_channel.channel_id).FirstOrDefault();
+
+                Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
+
+ 
+                
+                try
+                {
+                    //the channel does not exists in the database, so, CREATE it
+                    if(channel == null){
+                        sensor_db.channels.Add(new_channel);
+                    }
+
+                    //the channel does already exists in the database, so, UPDATE it
+                    if(channel != null){
+                        var channel_db = db.channels.SingleOrDefault(x => x.id == channel.id);
+                        channel_db.metrics.Add(new_channel.current_metric);
+                        channel_db.current_metric = new_channel.current_metric;
+                    }
+
+                    Context.EnqueueOperation(async () => db.SaveChanges());
+
+                }
+                catch (System.Exception error)
+                {
+                    string msg = error.Message;
+                    if (error.InnerException != null)
+                    {
+                        msg += error.InnerException.Message;
+                    }
+                }
+            }
+            
+
+            
+
+            sensor.channels = new_channels;
             Thread.Sleep(sensor.check_each);
         }
     }
 
 
 
-    private static async Task<Sensor> GetMetric(Sensor sensor, Service service, object instance, MethodInfo method){
-        
+    private static async Task<List<Channel>> GetMetric(Sensor sensor, Service service, object instance, MethodInfo method){
+        var channels = sensor.channels;
         try
         {
             var result_task = method.Invoke(instance, new object[] { service, sensor });
@@ -107,36 +150,35 @@ public class SensorsChecker
                 if (result_task.GetType().IsGenericType)
                 {
                     var resultProperty = result_task.GetType().GetProperty("Result");
-                    sensor = (Sensor)resultProperty.GetValue(result_task);
-                    return sensor;
+                    return (List<Channel>)resultProperty.GetValue(result_task);
                 }
             }
         }
         catch (TargetInvocationException error)
         {
-            sensor.channels.ForEach(x => {
+            channels.ForEach(x => {
                 x.current_metric = new Metric(){
                     message = error.Message,
                     error_code = 5,
                     datetime = DateTime.Now,
                 };
             });
-            return sensor;
+            return channels;
         }
         catch (Exception error)
         {
-            if(sensor.channels == null || sensor.channels.Count() == 0){
-                return sensor;
+            if(channels == null || channels.Count() == 0){
+                return channels;
             }
-            sensor.channels.ForEach(x => {
+            channels.ForEach(x => {
                 x.current_metric = new Metric(){
                     message = error.Message,
                     error_code = 5,
                     datetime = DateTime.Now,
                 };
             });
-            return sensor;
+            return channels;
         }
-        return sensor;
+        return channels;
     }
 }

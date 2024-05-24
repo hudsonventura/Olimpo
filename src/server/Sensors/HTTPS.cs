@@ -5,28 +5,12 @@ using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
 
-public class HTTPS : SensorGenDefaultChannel, ISensor2
+public class HTTPS : SensorGenDefaultChannel, ISensor3
 {
-    public List<Channel> GenChannels(Sensor sensor)
+    public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {
         List<Channel> channels = new List<Channel>();
         string info = (sensor.SSL_Verification_Check == true) ? "SSL check on" : "SSL check off";
-        channels.Add(new Channel(){
-            name = $"{sensor.name} - {info}",
-            channel_id = 1,
-        });
-        channels.Add(new Channel(){
-            name = $"{sensor.name} - Days for certifier expire",
-            channel_id = 2,
-        });
-        return channels;
-    }
-
-    
-
-
-    public async Task<Sensor> Test(Service service, Sensor sensor)
-    {
         Metric result = null;
 
         var handler = new HttpClientHandler();
@@ -40,7 +24,7 @@ public class HTTPS : SensorGenDefaultChannel, ISensor2
             expirationDate = cert.NotAfter;
 
             // Retornar true para ignorar a validação do certificado
-            return !sensor.SSL_Verification_Check;;
+            return sensor.SSL_Verification_Check;
         }; 
 
 
@@ -52,6 +36,7 @@ public class HTTPS : SensorGenDefaultChannel, ISensor2
             {
                 HttpResponseMessage response = await client.GetAsync($"https://{service.host}:{sensor.port}");
                 
+                //get the response 200, 300, 400, 500, etc
                 result = new Metric(){
                     message = response.StatusCode.ToString(),
                     value = (long)response.StatusCode,
@@ -65,7 +50,7 @@ public class HTTPS : SensorGenDefaultChannel, ISensor2
                     msg += error.InnerException.Message;
                 }
                 
-
+                //get erro to access, like timeout, recuses, etc
                 result = new Metric(){
                     message = msg,
                     latency = stopwatch.ElapsedMilliseconds
@@ -73,14 +58,25 @@ public class HTTPS : SensorGenDefaultChannel, ISensor2
             }finally{
                 stopwatch.Stop();
             }
-            sensor.channels[0].current_metric = result;
-            sensor.channels[1].current_metric = new Metric(){
-                message = "OK",
-                value = (expirationDate - DateTime.UtcNow).Days,
-                unit = Sensor.MetricUnit.Days.ToString(),
-                latency = stopwatch.ElapsedMilliseconds
-            };
-            return sensor;
+
+            channels.Add(new Channel(){
+                name = $"{sensor.name} - {info}",
+                channel_id = 1,
+                current_metric = result
+            });
+
+            channels.Add(new Channel(){
+                name = $"{sensor.name} - Days for certifier expire",
+                channel_id = 2,
+                unit = " days",
+                current_metric = new Metric(){
+                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Ok" : "Error",
+                    value = (expirationDate - DateTime.UtcNow).Days,
+                    latency = stopwatch.ElapsedMilliseconds
+                }
+            });
+            return channels;
+
         }
     }
 

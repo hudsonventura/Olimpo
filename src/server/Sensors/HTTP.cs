@@ -2,11 +2,13 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
-public class HTTP : SensorGenDefaultChannel, ISensor2
+public class HTTP : ISensor3
 {
-    public async Task<Sensor> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {
         Metric result = null;
+        List<Channel> channels = new List<Channel>();
+
         // Criação do HttpClient
         using (HttpClient client = new HttpClient())
         {
@@ -29,8 +31,15 @@ public class HTTP : SensorGenDefaultChannel, ISensor2
             }finally{
                 stopwatch.Stop();
             }
-            sensor.channels[0].current_metric = result;
-            return sensor;
+            channels.Add(new Channel(){
+                name = $"{sensor.name} - HTTP",
+                current_metric = result
+            });
+
+            
+
+            
         }
+        return channels;
     }
 }
