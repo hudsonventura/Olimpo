@@ -54,31 +54,10 @@ IConfiguration appsettings = new ConfigurationBuilder()
 
 
 //star threads to check each sensor
-SensorsChecker.StartLoopChecker(appsettings);
+Task checker_tread = Task.Run(() => SensorsChecker.StartLoopChecker(appsettings));
 
+//Start the tread to show console
+Task console_tread = Task.Run(() => ConsoleExhibitor.StartLoopShow(appsettings));
 
-using (var db = new Context(appsettings)){
-    while(true){
-        List<Stack> stacks = db.stacks
-            .Include(x => x.services)
-            .ThenInclude(x => x.sensors)
-            .ThenInclude(x => x.channels)
-            .ThenInclude(x => x.current_metric)
-            .ToList(); 
-
-        ConsoleExhibitor.Show(stacks);
-        Thread.Sleep(3000);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
+//Start the backend API server
 app.Run();

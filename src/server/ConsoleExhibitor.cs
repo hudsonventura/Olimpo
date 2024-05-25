@@ -7,7 +7,23 @@ namespace Olimpo;
 
 public class ConsoleExhibitor
 {
-    public static void Show(List<Stack> stacks)
+    public static void StartLoopShow(IConfiguration appsettings){
+        using (var db = new Context(appsettings)){
+            while(true){
+                List<Stack> stacks = db.stacks
+                    .AsNoTracking()
+                    .Include(x => x.services)
+                    .ThenInclude(x => x.sensors)
+                    .ThenInclude(x => x.channels)
+                    .ThenInclude(x => x.current_metric)
+                    .ToList(); 
+
+                ConsoleExhibitor.Show(stacks);
+                Thread.Sleep(3000);
+            }
+        }
+    }
+    private static void Show(List<Stack> stacks)
     {
         // Create the layout
         Layout layout = new Layout("Root")
