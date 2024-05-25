@@ -13,7 +13,7 @@ public class Channel
     public Alert? alerts { get; set; }
 
 
-    public string unit { get; set; } = String.Empty;
+    public string? unit { get; set; }
 
     public Metric current_metric { get; set; } = new Metric();
     public List<Metric> metrics { get; set; } = new List<Metric>();

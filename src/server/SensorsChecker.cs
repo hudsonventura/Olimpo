@@ -7,29 +7,33 @@ namespace Olimpo;
 
 public class SensorsChecker
 {
-    public static void StartLoopChecker(Context db){
-
-        List<Stack> stacks = db.stacks
+    public static void StartLoopChecker(IConfiguration appsettings)
+    {
+        using (var db = new Context(appsettings)){
+            List<Stack> stacks = db.stacks
             .Include(x => x.services)
             .ThenInclude(x => x.sensors)
             .ThenInclude(x => x.channels)
             .ToList();
 
-        foreach (var stack in stacks)
-        {
-            foreach (var service in stack.services)
+            foreach (var stack in stacks)
             {
-                foreach (var sensor in service.sensors)
+                foreach (var service in stack.services)
                 {
-                    Task task = Task.Run(() => SensorsChecker.LoopCheck(db, sensor, service));
-                    //Task.WaitAll(task);
+                    foreach (var sensor in service.sensors)
+                    {
+                        Task task = Task.Run(() => SensorsChecker.LoopCheck(appsettings, sensor, service));
+                        //Task.WaitAll(task);
+                    }
                 }
+                
             }
-            
         }
+
+        
     }
 
-    public static async void LoopCheck(Context db, Sensor sensor, Service service)
+    public static async void LoopCheck(IConfiguration appsettings, Sensor sensor, Service service)
     {
         string targetNamespace = "Olimpo.Sensors";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -87,49 +91,50 @@ public class SensorsChecker
       
 
         while(true){
-            //sensor.channels = channels;
-            var new_channels = await GetMetric(sensor, service, instance, testMethod);
+            using (var db = new Context(appsettings)){
+                var new_channels = await GetMetric(sensor, service, instance, testMethod);
 
 
-            foreach (var new_channel in new_channels)
-            {
-                var channel = sensor.channels.Where(x => x.channel_id == new_channel.channel_id).FirstOrDefault();
-
-                Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
-
- 
-                
-                try
+                foreach (var new_channel in new_channels)
                 {
-                    //the channel does not exists in the database, so, CREATE it
-                    if(channel == null){
-                        sensor_db.channels.Add(new_channel);
-                    }
+                    var channel = sensor.channels.Where(x => x.channel_id == new_channel.channel_id).FirstOrDefault();
 
-                    //the channel does already exists in the database, so, UPDATE it
-                    if(channel != null){
-                        var channel_db = db.channels.SingleOrDefault(x => x.id == channel.id);
-                        channel_db.metrics.Add(new_channel.current_metric);
-                        channel_db.current_metric = new_channel.current_metric;
-                    }
+                    Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
 
-                    Context.EnqueueOperation(async () => db.SaveChanges());
-
-                }
-                catch (System.Exception error)
-                {
-                    string msg = error.Message;
-                    if (error.InnerException != null)
+    
+                    
+                    try
                     {
-                        msg += error.InnerException.Message;
+                        //the channel does not exists in the database, so, CREATE it
+                        if(channel == null){
+                            sensor_db.channels.Add(new_channel);
+                        }
+
+                        //the channel does already exists in the database, so, UPDATE it
+                        if(channel != null){
+                            channel.metrics.Add(new_channel.current_metric);
+                            channel.current_metric = new_channel.current_metric;
+                        }
+
+                        db.SaveChanges();
+
+                    }
+                    catch (System.Exception error)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Error on save metric");
+                        Console.WriteLine($"Sensor: {sensor.name}");
+                        Console.WriteLine($"Channel: {new_channel.name}");
+                        Console.WriteLine($"Exception: {error.Message}");
+                        if (error.InnerException != null)
+                        {
+                            Console.WriteLine($"InnerException: {error.InnerException.Message}");
+                        }
+                        
                     }
                 }
+                sensor.channels = new_channels;
             }
-            
-
-            
-
-            sensor.channels = new_channels;
             Thread.Sleep(sensor.check_each);
         }
     }

@@ -15,7 +15,6 @@ public class Context : DbContext
     public Context(IConfiguration appsettings) : base()
     {
         stringConnection = appsettings.GetConnectionString("DefaultConnection");
-        //Console.WriteLine(_dbStringConnection);
     }
 
 

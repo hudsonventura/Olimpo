@@ -51,23 +51,24 @@ IConfiguration appsettings = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{env}.json", optional: true)
     .Build();
 
-//List<Stack> stacks = appsettings.GetSection("stacks").Get<List<Stack>>();
-
-var db = new Context(appsettings);
 
 
 //star threads to check each sensor
-SensorsChecker.StartLoopChecker(db);
+SensorsChecker.StartLoopChecker(appsettings);
 
-while(true){
-    List<Stack> stacks = db.stacks
+
+using (var db = new Context(appsettings)){
+    while(true){
+        List<Stack> stacks = db.stacks
             .Include(x => x.services)
             .ThenInclude(x => x.sensors)
             .ThenInclude(x => x.channels)
-            .ToList();
+            .ThenInclude(x => x.current_metric)
+            .ToList(); 
 
-    ConsoleExhibitor.Show(stacks);
-    Thread.Sleep(3000);
+        ConsoleExhibitor.Show(stacks);
+        Thread.Sleep(3000);
+    }
 }
 
 

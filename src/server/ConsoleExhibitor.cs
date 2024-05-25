@@ -7,8 +7,8 @@ namespace Olimpo;
 
 public class ConsoleExhibitor
 {
-    public static void Show(List<Stack> stacks){
-
+    public static void Show(List<Stack> stacks)
+    {
         // Create the layout
         Layout layout = new Layout("Root")
             .SplitColumns(
