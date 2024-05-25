@@ -1,9 +1,9 @@
 using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
-public class PING : SensorGenDefaultChannel, ISensor2
+public class PING : ISensor3
 {
-    public async Task<Sensor> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {
         var ping = new System.Net.NetworkInformation.Ping();
 
@@ -36,7 +36,13 @@ public class PING : SensorGenDefaultChannel, ISensor2
         {
             result = new Metric() { message = error.Message };
         }
-        sensor.channels[0].current_metric = result;
-        return sensor;
+        List<Channel> channels = new List<Channel>();
+        channels.Add(new Channel() { 
+            name = $"{sensor.name} - Ping",
+            current_metric = result, 
+            unit = "ms" 
+        });
+        return channels;
     }
+
 }

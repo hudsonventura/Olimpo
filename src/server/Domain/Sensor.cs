@@ -21,7 +21,7 @@ public partial class Sensor
     public string? password { get; set; }
 
     
-    public bool SSL_Verification_Check { get; set; } //Used on HTTPS Sensor
+    public bool? SSL_Verification_Check { get; set; } //Used on HTTPS Sensor
 
     
 

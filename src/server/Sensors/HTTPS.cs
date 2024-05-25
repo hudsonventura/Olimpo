@@ -24,7 +24,7 @@ public class HTTPS : SensorGenDefaultChannel, ISensor3
             expirationDate = cert.NotAfter;
 
             // Retornar true para ignorar a validação do certificado
-            return sensor.SSL_Verification_Check;
+            return (bool)sensor.SSL_Verification_Check;
         }; 
 
 

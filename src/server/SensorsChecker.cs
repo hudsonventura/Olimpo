@@ -97,8 +97,9 @@ public class SensorsChecker
                 {
                     try
                     {
-                        Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
-                        Channel channel = db.channels.Where(x => x.channel_id == new_channel.channel_id).Include(x => x.current_metric).FirstOrDefault();
+                        Sensor sensor_db = db.sensors.Where(x => x.id == sensor.id).Include(x => x.channels).ThenInclude(x => x.current_metric).FirstOrDefault();
+                        Channel channel = sensor_db.channels.Where(x => x.channel_id == new_channel.channel_id)//.Include(x => x.current_metric)
+                        .FirstOrDefault();
 
                         //the channel does not exists in the database, so, CREATE it
                         if(channel == null){
