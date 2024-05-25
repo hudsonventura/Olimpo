@@ -90,21 +90,16 @@ public class SensorsChecker
 
       
 
-        while(true){
-            using (var db = new Context(appsettings)){
+        using (var db = new Context(appsettings)){
+            while(true){
                 var new_channels = await GetMetric(sensor, service, instance, testMethod);
-
-
                 foreach (var new_channel in new_channels)
                 {
-                    var channel = sensor.channels.Where(x => x.channel_id == new_channel.channel_id).FirstOrDefault();
-
-                    Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
-
-    
-                    
                     try
                     {
+                        Sensor sensor_db = db.sensors.SingleOrDefault(x => x.id == sensor.id);
+                        Channel channel = db.channels.Where(x => x.channel_id == new_channel.channel_id).Include(x => x.current_metric).FirstOrDefault();
+
                         //the channel does not exists in the database, so, CREATE it
                         if(channel == null){
                             sensor_db.channels.Add(new_channel);
@@ -112,8 +107,8 @@ public class SensorsChecker
 
                         //the channel does already exists in the database, so, UPDATE it
                         if(channel != null){
-                            channel.metrics.Add(new_channel.current_metric);
                             channel.current_metric = new_channel.current_metric;
+                            channel.metrics.Add(new_channel.current_metric);
                         }
 
                         db.SaveChanges();
@@ -133,9 +128,10 @@ public class SensorsChecker
                         
                     }
                 }
-                sensor.channels = new_channels;
+                //sensor.channels = new_channels;
+                Thread.Sleep(sensor.check_each);
             }
-            Thread.Sleep(sensor.check_each);
+            
         }
     }
 
