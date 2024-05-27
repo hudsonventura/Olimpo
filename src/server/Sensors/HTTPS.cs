@@ -5,7 +5,7 @@ using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
 
-public class HTTPS : ISensor3
+public class HTTPS : ISensor
 {
     public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {

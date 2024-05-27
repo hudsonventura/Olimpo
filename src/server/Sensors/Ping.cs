@@ -1,7 +1,7 @@
 using Olimpo.Domain;
 namespace Olimpo.Sensors;
 
-public class PING : ISensor3
+public class PING : ISensor
 {
     public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {

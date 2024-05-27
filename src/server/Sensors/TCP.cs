@@ -4,7 +4,7 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
-public class TCP : ISensor3
+public class TCP : ISensor
 {
     
     public async Task<List<Channel>> Test(Service service, Sensor sensor)

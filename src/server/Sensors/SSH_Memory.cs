@@ -4,7 +4,7 @@ using Renci.SshNet;
 
 namespace Olimpo.Sensors;
 
-public class SSH_MEMORY : ISensor3
+public class SSH_MEMORY : ISensor
 {
     public async Task<List<Channel>> Test(Service service, Sensor sensor)
     {
