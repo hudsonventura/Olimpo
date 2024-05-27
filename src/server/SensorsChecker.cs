@@ -9,29 +9,49 @@ public class SensorsChecker
 {
     public static void StartLoopChecker(IConfiguration appsettings)
     {
+        Dictionary<Guid, (Sensor, Task, CancellationTokenSource)> manager_sensors = new Dictionary<Guid, (Sensor, Task, CancellationTokenSource)>();
         using (var db = new Context(appsettings)){
-            List<Stack> stacks = db.stacks
-            .Include(x => x.services)
-            .ThenInclude(x => x.sensors)
-            .ThenInclude(x => x.channels)
-            .ToList();
+            while(true){
+                List<Stack> stacks = db.stacks
+                    .Include(x => x.services)
+                    .ThenInclude(x => x.sensors)
+                    .ThenInclude(x => x.channels)
+                    .ToList();
 
-            foreach (var stack in stacks)
-            {
-                foreach (var service in stack.services)
+                foreach (var stack in stacks)
                 {
-                    foreach (var sensor in service.sensors)
+                    foreach (var service in stack.services)
                     {
-                        Task task = Task.Run(() => SensorsChecker.LoopCheck(appsettings, sensor, service));
-                        //Task.WaitAll(task);
+                        foreach (var sensor in service.sensors)
+                        {
+
+                            //if the sensor was not running yet
+                            if (!manager_sensors.ContainsKey(sensor.id))
+                            {
+                                var cancel = new CancellationTokenSource();
+                                CancellationToken cancelation_token = cancel.Token;
+
+                                Task task = Task.Run(() => SensorsChecker.LoopCheck(appsettings, sensor, service), cancelation_token);
+                                
+                                manager_sensors.Add(sensor.id, (sensor, task, cancel));
+                                continue;
+                            }
+
+                            //the sensor exists, but it's different or it was updated
+                            if(manager_sensors.ContainsKey(sensor.id) && manager_sensors[sensor.id].Item1 != sensor){
+                                CancellationTokenSource cancellation = manager_sensors[sensor.id].Item3;
+                                cancellation.Cancel();
+                                manager_sensors.Remove(sensor.id);
+                            }
+                        }
                     }
                 }
-                
+                Thread.Sleep(60000);
             }
         }
-
-        
     }
+    
+    
 
     public static async void LoopCheck(IConfiguration appsettings, Sensor sensor, Service service)
     {
@@ -92,7 +112,8 @@ public class SensorsChecker
 
         using (var db = new Context(appsettings)){
             while(true){
-                var new_channels = await GetMetric(sensor, service, instance, testMethod);
+                var db_sensor = db.sensors.Where(x => x.id == sensor.id).Include(x => x.channels).AsNoTracking().FirstOrDefault();
+                var new_channels = await GetMetric(db_sensor, service, instance, testMethod);
                 foreach (var new_channel in new_channels)
                 {
                     try
