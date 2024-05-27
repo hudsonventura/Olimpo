@@ -2,7 +2,7 @@ using Olimpo.Sensors;
 
 namespace Olimpo.Domain;
 
-public class Service
+public class Service : Hierarquical  // like a file
 {
     public Guid id { get; set; }
 

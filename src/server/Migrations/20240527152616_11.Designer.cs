@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olimpo;
@@ -11,9 +12,10 @@ using Olimpo;
 namespace server.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240527152616_11")]
+    partial class _11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +44,7 @@ namespace server.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("alerts", (string)null);
+                    b.ToTable("alerts");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Channel", b =>
@@ -78,7 +80,7 @@ namespace server.Migrations
 
                     b.HasIndex("current_metricid");
 
-                    b.ToTable("channels", (string)null);
+                    b.ToTable("channels");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Metric", b =>
@@ -110,7 +112,7 @@ namespace server.Migrations
 
                     b.HasIndex("Channelid");
 
-                    b.ToTable("metrics", (string)null);
+                    b.ToTable("metrics");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Service", b =>
@@ -137,7 +139,7 @@ namespace server.Migrations
 
                     b.HasIndex("upid");
 
-                    b.ToTable("services", (string)null);
+                    b.ToTable("services");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Stack", b =>
@@ -160,7 +162,7 @@ namespace server.Migrations
 
                     b.HasIndex("upid");
 
-                    b.ToTable("stacks", (string)null);
+                    b.ToTable("stacks");
                 });
 
             modelBuilder.Entity("Olimpo.Sensors.Sensor", b =>
@@ -202,7 +204,7 @@ namespace server.Migrations
 
                     b.HasIndex("Serviceid");
 
-                    b.ToTable("sensors", (string)null);
+                    b.ToTable("sensors");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Channel", b =>

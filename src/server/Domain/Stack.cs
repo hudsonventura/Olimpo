@@ -1,6 +1,6 @@
 namespace Olimpo.Domain;
 
-public class Stack
+public class Stack : Hierarquical // like directory
 {
     public Guid id { get; set; }
 
