@@ -3,7 +3,8 @@ using System.Reflection;
 
 using Olimpo;
 using Olimpo.Domain;
-using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,17 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+
+//this is to cancel error: System.Text.Json.JsonException: A possible object cycle was detected. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+builder.Services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Formatting = Formatting.Indented; // Opcional: para saída JSON indentada
+            });
+
+
+builder.Services.AddScoped<Context>();
 
 var app = builder.Build();
 

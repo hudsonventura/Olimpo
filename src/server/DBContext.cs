@@ -3,9 +3,6 @@ using Olimpo.Domain;
 using Olimpo.Sensors;
 
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace Olimpo;
 
