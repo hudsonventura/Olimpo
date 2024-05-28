@@ -1,73 +1,134 @@
+import React, { useState, useEffect } from 'react';
 import logo from './../logo.svg';
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-import { Tree } from 'primereact/tree';
-        
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Table from 'react-bootstrap/Table';
 
 
-
-import 'primereact/resources/themes/lara-light-cyan/theme.css';
-import { Button } from 'primereact/button';
-
-let nodes = [
-    {
-        "label": "1 > Documents",
-        "data": {id:1},
-        "expandedIcon": "fa-folder-open",
-        "collapsedIcon": "fa-folder",
-        "children": [{
-            "label": "111 > Work",
-            "data": {id: 111},
-            "expandedIcon": "fa-folder-open",
-            "collapsedIcon": "fa-folder",
-            "children": [
-              { "label": "11 > Expenses.doc", "icon": "fa-file-word-o", "data":{id:11} }, 
-            { "label": "12 > Resume.doc", "icon": "fa-file-word-o",  "data":{id:12} }
-            ]
-        },
-        {
-            "label": "112 > Home",
-            "data": {id: 112},
-            "expandedIcon": "fa-folder-open",
-            "collapsedIcon": "fa-folder",
-            "children": [{ "label": "21> Invoices.txt", "icon": "fa-file-word-o", "data":{id:21}}]
-        }]
-    },
-    {
-        "label": "2> Pictures",
-        "data": {id: 2},
-        "expandedIcon": "fa-folder-open",
-        "collapsedIcon": "fa-folder",
-        "children": [
-            { "label": "31 >barcelona.jpg", "icon": "fa-file-image-o", "data":{id:31} },
-            { "label": "32 > logo.jpg", "icon": "fa-file-image-o", "data":{id:32} },
-            { "label": "33> primeui.png", "icon": "fa-file-image-o", "data":{id:33} }]
-    }
-   
-]
 
 function Main() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
 
-        <Button label="PrimeReact" />
-        <Tree value={nodes} className="w-full md:w-30rem" />
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    useEffect(() => {
+        // URL da API
+        const url = 'https://localhost:5001/Api';
+    
+        // Função para buscar dados
+        const fetchData = async () => {
+          try {
+            const response = await fetch(url);
+    
+            if (!response.ok) {
+              throw new Error(`Erro: ${response.status}`);
+            }
+    
+            const jsonData = await response.json();
+            setData(jsonData);
+          } catch (error) {
+            setError(error.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchData();
+      }, []); // O array vazio [] significa que este efeito roda apenas uma vez após o componente montar
+    
+    if (loading) {
+        return <div>Carregando...</div>;
+    }
+
+    if (error) {
+        return <div>Erro: {error}</div>;
+    }
+
+
+    // Funções de contagem
+const countChannelsInSensor = (sensor) => {
+    return sensor.channels.length;
+  };
+  
+  const countChannelsInService = (service) => {
+    return service.sensors.reduce((sensorTotal, sensor) => {
+      return sensorTotal + countChannelsInSensor(sensor);
+    }, 0);
+  };
+  
+  const countChannelsInStack = (stack) => {
+    return stack.services.reduce((serviceTotal, service) => {
+      return serviceTotal + countChannelsInService(service);
+    }, 0);
+  };
+
+    return (
+    <>
+        <Container>
+        <Table striped bordered hover>
+            <thead>
+                <tr>
+                <th>Stack</th>
+                <th>Service</th>
+                <th>Sensor</th>
+                <th>Channel</th>
+                <th>Latency</th>
+                <th>Value</th>
+                <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {data.map((stack, index) => (
+                    <>
+                        <tr>
+                            <td rowspan={countChannelsInStack(stack)*2}>Stack: {stack.name} - {countChannelsInStack(stack)}</td>
+                        </tr>
+                        {
+                            stack.services.map(service => (
+                                <>
+                                    <tr>
+                                        <td rowspan={countChannelsInService(service)}>Service: {service.name} - {countChannelsInService(service)}</td>
+                                    </tr>
+                                    {
+                                        service.sensors.map(sensor => (
+                                            <>
+                                                <tr>
+                                                    <td rowspan={countChannelsInSensor(sensor)+1}>Sensor: {sensor.name} - {countChannelsInSensor(sensor)}</td>
+                                                </tr>
+                                                
+                                                {
+                                                    sensor.channels.map(channel => (
+                                                        <>
+                                                            <tr>
+                                                            <td>Channel: {channel.name}</td>
+                                                            <td>{channel.current_metric.latency} ms</td>
+                                                            <td>{channel.current_metric.value} {channel.unit}</td>
+                                                            <td>Message</td>
+                                                            </tr>
+                                                        </>
+                                                    ))
+                                                }
+                                            </>
+                                        ))
+                                    }
+                                </>
+                            ))
+                        }
+                    </>
+                ))}
+            </tbody>
+        </Table>
+        </Container>
+    </>
+    
+    
   );
 }
 
