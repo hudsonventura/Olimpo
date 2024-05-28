@@ -40,8 +40,15 @@ function Main() {
           }
         };
     
+        // Configura um intervalo para buscar dados a cada segundo
+        const intervalId = setInterval(fetchData, 1000);
+    
+        // Chama a função fetchData imediatamente na montagem
         fetchData();
-      }, []); // O array vazio [] significa que este efeito roda apenas uma vez após o componente montar
+    
+        // Limpa o intervalo quando o componente desmontar
+        return () => clearInterval(intervalId);
+      }, []); 
     
     if (loading) {
         return <div>Carregando...</div>;
@@ -60,13 +67,13 @@ const countChannelsInSensor = (sensor) => {
   const countChannelsInService = (service) => {
     return service.sensors.reduce((sensorTotal, sensor) => {
       return sensorTotal + countChannelsInSensor(sensor);
-    }, 0);
+    }, 1);
   };
   
   const countChannelsInStack = (stack) => {
     return stack.services.reduce((serviceTotal, service) => {
       return serviceTotal + countChannelsInService(service);
-    }, 0);
+    }, 1);
   };
 
     return (
@@ -79,6 +86,7 @@ const countChannelsInSensor = (sensor) => {
                 <th>Service</th>
                 <th>Sensor</th>
                 <th>Channel</th>
+                <th>Type/Port</th>
                 <th>Latency</th>
                 <th>Value</th>
                 <th>Message</th>
@@ -88,29 +96,31 @@ const countChannelsInSensor = (sensor) => {
                 {data.map((stack, index) => (
                     <>
                         <tr>
-                            <td rowspan={countChannelsInStack(stack)*2}>Stack: {stack.name} - {countChannelsInStack(stack)}</td>
+                            <td key={index} rowSpan={countChannelsInStack(stack)}><b>{stack.name}</b></td>
                         </tr>
                         {
-                            stack.services.map(service => (
+                            stack.services.map((service, index2) => (
                                 <>
                                     <tr>
-                                        <td rowspan={countChannelsInService(service)}>Service: {service.name} - {countChannelsInService(service)}</td>
+                                        <td key={index2} rowSpan={countChannelsInService(service)}><b style={{color:"blue"}}>{service.name}</b></td>
                                     </tr>
                                     {
-                                        service.sensors.map(sensor => (
+                                        service.sensors.map((sensor, index3) => (
                                             <>
-                                                <tr>
-                                                    <td rowspan={countChannelsInSensor(sensor)+1}>Sensor: {sensor.name} - {countChannelsInSensor(sensor)}</td>
-                                                </tr>
+                                                {/* <tr>
+                                                    <td rowspan={countChannelsInSensor(sensor)+1}><b style={{color:"red"}}>{sensor.name}</b> - {countChannelsInSensor(sensor)}</td>
+                                                </tr> */}
                                                 
                                                 {
-                                                    sensor.channels.map(channel => (
+                                                    sensor.channels.map((channel, index4) => (
                                                         <>
-                                                            <tr>
-                                                            <td>Channel: {channel.name}</td>
+                                                            <tr key={index4}>
+                                                            <td><b style={{color:"red"}}>{sensor.name}</b></td>
+                                                            <td><b style={{color:"green"}}>{channel.name}</b></td>
+                                                            <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                             <td>{channel.current_metric.latency} ms</td>
                                                             <td>{channel.current_metric.value} {channel.unit}</td>
-                                                            <td>Message</td>
+                                                            <td>{channel.current_metric.message}</td>
                                                             </tr>
                                                         </>
                                                     ))
