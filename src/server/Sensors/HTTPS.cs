@@ -38,7 +38,7 @@ public class HTTPS : ISensor
                 
                 //get the response 200, 300, 400, 500, etc
                 result = new Metric(){
-                    message = response.StatusCode.ToString(),
+                    message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
                     latency = stopwatch.ElapsedMilliseconds
                 };
@@ -53,7 +53,8 @@ public class HTTPS : ISensor
                 //get erro to access, like timeout, recuses, etc
                 result = new Metric(){
                     message = msg,
-                    latency = stopwatch.ElapsedMilliseconds
+                    latency = stopwatch.ElapsedMilliseconds,
+                    error_code = -1
                 };
             }finally{
                 stopwatch.Stop();
@@ -70,7 +71,7 @@ public class HTTPS : ISensor
                 channel_id = 2,
                 unit = " days",
                 current_metric = new Metric(){
-                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Ok" : "Error",
+                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error",
                     value = (expirationDate - DateTime.UtcNow).Days,
                     latency = stopwatch.ElapsedMilliseconds
                 }

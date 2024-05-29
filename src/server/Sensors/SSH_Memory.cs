@@ -37,7 +37,7 @@ public class SSH_MEMORY : ISensor
                                 unit = "GB",
                                 current_metric = new Metric(){
                                 latency = stopwatch.ElapsedMilliseconds,
-                                message = "Ok",
+                                message = "Success",
                                 value = decimal.Parse(numberWithoutComma)
                             }
                         });

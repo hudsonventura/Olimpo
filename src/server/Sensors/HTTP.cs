@@ -17,7 +17,7 @@ public class HTTP : ISensor
             {
                 HttpResponseMessage response = await client.GetAsync($"http://{service.host}:{sensor.port}");
                 result = new Metric(){
-                    message = response.StatusCode.ToString(),
+                    message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
                     latency = stopwatch.ElapsedMilliseconds
                 };
@@ -26,7 +26,8 @@ public class HTTP : ISensor
             {
                 result = new Metric(){
                     message = error.Message,
-                    latency = stopwatch.ElapsedMilliseconds
+                    latency = stopwatch.ElapsedMilliseconds,
+                    error_code = 1
                 };
             }finally{
                 stopwatch.Stop();
