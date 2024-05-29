@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import logo from './../logo.svg';
 
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Badge from 'react-bootstrap/Badge';
 
 
 
@@ -61,29 +59,69 @@ function Main() {
     }
 
 
-    // Funções de contagem
-const countChannelsInSensor = (sensor) => {
-    return sensor.channels.length+1;
-  };
+    // Funções de contagem de sensor
+    const countChannelsInSensor = (sensor) => {
+        return sensor.channels.length+1;
+    };
+    const countChannelsInSensor_Error = (sensor) => {
+        return sensor.channels.filter(channel => channel.current_metric?.error_code > 0).length;
+    };
+
+    const countChannelsInSensor_Success = (sensor) => {
+        return sensor.channels.filter(channel => channel.current_metric?.error_code == 0).length;
+    };
+
   
-  const countChannelsInService = (service) => {
-    return service.sensors.reduce((sensorTotal, sensor) => {
-      return sensorTotal + countChannelsInSensor(sensor);
-    }, 1);
-  };
+    // Funções de contagem de serviço
+    const countChannelsInService = (service) => {
+        return service.sensors.reduce((sensorTotal, sensor) => {
+        return sensorTotal + countChannelsInSensor(sensor);
+        }, 1);
+    };
+
+    const countChannelsInService_Error = (service) => {
+        return service.sensors.reduce((sensorTotal, sensor) => {
+        return sensorTotal + countChannelsInSensor_Error(sensor);
+        }, 0);
+    };
+
+    const countChannelsInService_Success = (service) => {
+        return service.sensors.reduce((sensorTotal, sensor) => {
+        return sensorTotal + countChannelsInSensor_Success(sensor);
+        }, 0);
+    };
   
-  const countChannelsInStack = (stack) => {
-    return stack.services.reduce((serviceTotal, service) => {
-      return serviceTotal + countChannelsInService(service);
-    }, 1);
-  };
+
+
+    // Funções de contagem de stack
+    const countChannelsInStack = (stack) => {
+        return stack.services.reduce((serviceTotal, service) => {
+        return serviceTotal + countChannelsInService(service);
+        }, 1);
+    };
+
+    const countChannelsInStack_Error = (stack) => {
+        return stack.services.reduce((serviceTotal, service) => {
+        return serviceTotal + countChannelsInService_Error(service);
+        }, 0);
+    };
+
+    const countChannelsInStack_Success = (stack) => {
+        return stack.services.reduce((serviceTotal, service) => {
+        return serviceTotal + countChannelsInService_Success(service);
+        }, 0);
+    };
+
+
+    
+      
 
 
 
     return (
     <>
         <Container fluid style={{marginTop: '15px'}}>
-        <Table striped bordered hover size="sm">
+        <Table bordered hover size="sm">
             <thead>
                 <tr>
                 <th>Stack</th>
@@ -100,19 +138,19 @@ const countChannelsInSensor = (sensor) => {
                 {data.map((stack, index) => (
                     <>
                         <tr>
-                            <td key={index} rowSpan={countChannelsInStack(stack)}><b>{stack.name}</b></td>
+                            <td key={index} rowSpan={countChannelsInStack(stack)}>{stack.name} {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} </td>
                         </tr>
                         {
                             stack.services.map((service, index2) => (
                                 <>
                                     <tr>
-                                        <td key={index2} rowSpan={countChannelsInService(service)}><b style={{color:"blue"}}>{service.name}</b></td>
+                                        <td key={index2} rowSpan={countChannelsInService(service)}>{service.name} {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} </td>
                                     </tr>
                                     {
                                         service.sensors.map((sensor, index3) => (
                                             <>
                                                 <tr>
-                                                    <td rowSpan={countChannelsInSensor(sensor)}><b style={{color:"red"}}>{sensor.name}</b> - {countChannelsInSensor(sensor)}</td>
+                                                    <td rowSpan={countChannelsInSensor(sensor)}>{sensor.name} {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
                                                 </tr>
                                                 
                                                 {
@@ -122,7 +160,7 @@ const countChannelsInSensor = (sensor) => {
                                                             <tr key={index4}>
                                                             
                                                             {/* <td><b style={{color:"red"}}>{sensor.name}</b></td> */}
-                                                            <td><b style={{color:"green"}}>{channel.name}</b></td>
+                                                            <td>{channel.name}</td>
                                                             <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                             <td>{channel.current_metric.latency} ms</td>
                                                             <td>
