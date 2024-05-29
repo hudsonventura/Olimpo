@@ -9,6 +9,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 
 
@@ -61,7 +63,7 @@ function Main() {
 
     // Funções de contagem
 const countChannelsInSensor = (sensor) => {
-    return sensor.channels.length;
+    return sensor.channels.length+1;
   };
   
   const countChannelsInService = (service) => {
@@ -76,10 +78,12 @@ const countChannelsInSensor = (sensor) => {
     }, 1);
   };
 
+
+
     return (
     <>
-        <Container>
-        <Table striped bordered hover>
+        <Container fluid style={{marginTop: '15px'}}>
+        <Table striped bordered hover size="sm">
             <thead>
                 <tr>
                 <th>Stack</th>
@@ -87,9 +91,9 @@ const countChannelsInSensor = (sensor) => {
                 <th>Sensor</th>
                 <th>Channel</th>
                 <th>Type/Port</th>
-                <th>Latency</th>
+                <th style={{width: "100px"}}>Latency</th>
                 <th>Value</th>
-                <th>Message</th>
+                <th style={{width: "600px"}}>Message</th>
                 </tr>
             </thead>
             <tbody>
@@ -107,16 +111,17 @@ const countChannelsInSensor = (sensor) => {
                                     {
                                         service.sensors.map((sensor, index3) => (
                                             <>
-                                                {/* <tr>
-                                                    <td rowspan={countChannelsInSensor(sensor)+1}><b style={{color:"red"}}>{sensor.name}</b> - {countChannelsInSensor(sensor)}</td>
-                                                </tr> */}
+                                                <tr>
+                                                    <td rowSpan={countChannelsInSensor(sensor)}><b style={{color:"red"}}>{sensor.name}</b> - {countChannelsInSensor(sensor)}</td>
+                                                </tr>
                                                 
                                                 {
                                                     sensor.channels.map((channel, index4) => (
                                                         <>
                                                             {console.log(channel.current_metric)}
                                                             <tr key={index4}>
-                                                            <td><b style={{color:"red"}}>{sensor.name}</b></td>
+                                                            
+                                                            {/* <td><b style={{color:"red"}}>{sensor.name}</b></td> */}
                                                             <td><b style={{color:"green"}}>{channel.name}</b></td>
                                                             <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                             <td>{channel.current_metric.latency} ms</td>
@@ -124,7 +129,11 @@ const countChannelsInSensor = (sensor) => {
                                                                 <Button style={{width: "110px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
                                                                     {channel.current_metric.value} {channel.unit}</Button>
                                                                 </td>
-                                                            <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold"} : {color: "green"}}>{channel.current_metric.message}</td>
+                                                                <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>
+                                                                    <OverlayTrigger placement="left" delay={{ show: 100, hide: 400 }} overlay={<Tooltip id="button-tooltip-2">{channel.current_metric.message}</Tooltip>}>
+                                                                        <text>{(channel.current_metric.message.length > 50) ? channel.current_metric.message.substr(0, 50) + ' ...': channel.current_metric.message}</text>
+                                                                    </OverlayTrigger>
+                                                                </td>
                                                             </tr>
                                                         </>
                                                     ))
