@@ -13,6 +13,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Badge from 'react-bootstrap/Badge';
 
 import Toasty from '../components/Toasty';
+import Channel from '../components/Channel';
 
 
 
@@ -179,13 +180,26 @@ function Main() {
                                     </tr>
                                         :
                                             <tr>
-                                                <td>{service.name}</td>
+                                                {/* <td>{service.name}</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
-                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td>
+                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td> */}
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td colSpan={5}>
+                                                    <Row>
+                                                        
+                                                            <Channel value={10} title={"HTTPS - Site - Days for certifier expire"} type="danger" unit="days"></Channel>
+                                                        
+                                                            <Channel value={200} title={"HTTPS - Site - SSL check on"} type="warning" unit=""></Channel>
+                                                        
+                                                            <Channel value={3} title={"Ping"} type="success" unit="ms"></Channel>
+                                                        
+                                                    </Row>
+                                                </td>
                                             </tr>
                                         
                                     }
