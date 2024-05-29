@@ -114,13 +114,17 @@ const countChannelsInSensor = (sensor) => {
                                                 {
                                                     sensor.channels.map((channel, index4) => (
                                                         <>
+                                                            {console.log(channel.current_metric)}
                                                             <tr key={index4}>
                                                             <td><b style={{color:"red"}}>{sensor.name}</b></td>
                                                             <td><b style={{color:"green"}}>{channel.name}</b></td>
                                                             <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                             <td>{channel.current_metric.latency} ms</td>
-                                                            <td>{channel.current_metric.value} {channel.unit}</td>
-                                                            <td>{channel.current_metric.message}</td>
+                                                            <td>
+                                                                <Button style={{width: "110px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
+                                                                    {channel.current_metric.value} {channel.unit}</Button>
+                                                                </td>
+                                                            <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold"} : {color: "green"}}>{channel.current_metric.message}</td>
                                                             </tr>
                                                         </>
                                                     ))
