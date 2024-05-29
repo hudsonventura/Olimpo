@@ -142,9 +142,9 @@ function Main() {
     <>
         <Container style={{marginTop: '15px'}}>
             <Row>
-                <Toasty type="success" value={countChannelsInAllStacks_Success(data)} text={"Ok"}></Toasty>
-                <Toasty type="warning" value="Fake" text={"teste"}></Toasty>
-                <Toasty type="danger"  value={countChannelsInAllStacks_Error(data)} text={"Error"}></Toasty>
+                <Toasty type="success" value={countChannelsInAllStacks_Success(data)} text={"Ok"} title="Number of channels online"></Toasty>
+                <Toasty type="warning" value="Fake" text={"Warnning"} title="Number of channels with some alert"></Toasty>
+                <Toasty type="danger"  value={countChannelsInAllStacks_Error(data)} text={"Error"} title="Number of channels offline / error"></Toasty>
             </Row>
         </Container>
         <Container fluid style={{marginTop: '15px'}}>
