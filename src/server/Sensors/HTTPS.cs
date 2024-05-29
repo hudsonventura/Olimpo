@@ -4,6 +4,7 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
+//TODO: Implements a way to inform the endpoint
 
 public class HTTPS : ISensor
 {
@@ -34,7 +35,23 @@ public class HTTPS : ISensor
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"https://{service.host}:{sensor.port}");
+                string url = $"https://{service.host}:{sensor.port}";
+                if(sensor.host != null){
+                    url = sensor.host;
+                }
+
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                int error_code = 0;
+                if(!response.IsSuccessStatusCode){
+                    error_code = 1;
+                }
+                result = new Metric(){
+                    message = $"Status code: {response.StatusCode.ToString()}",
+                    value = (long)response.StatusCode,
+                    latency = stopwatch.ElapsedMilliseconds,
+                    error_code = error_code
+                };
                 
                 //get the response 200, 300, 400, 500, etc
                 result = new Metric(){

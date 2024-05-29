@@ -2,6 +2,7 @@ using Olimpo.Domain;
 
 namespace Olimpo.Sensors;
 
+//TODO: Implements a way to inform the endpoint
 public class HTTP : ISensor
 {
     public async Task<List<Channel>> Test(Service service, Sensor sensor)
@@ -15,11 +16,23 @@ public class HTTP : ISensor
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"http://{service.host}:{sensor.port}");
+                string url = $"http://{service.host}:{sensor.port}";
+                if(sensor.host != null){
+                    url = sensor.host;
+                }
+
+                HttpResponseMessage response = response = await client.GetAsync(url);
+                
+
+                int error_code = 0;
+                if(!response.IsSuccessStatusCode){
+                    error_code = 1;
+                }
                 result = new Metric(){
                     message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
-                    latency = stopwatch.ElapsedMilliseconds
+                    latency = stopwatch.ElapsedMilliseconds,
+                    error_code = error_code
                 };
             }
             catch (Exception error)

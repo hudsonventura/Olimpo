@@ -13,7 +13,7 @@ public partial class Sensor
     public int check_each { get; set; } = 1000; //re-check the sensor each a num of milliseconds. Default is 1000 seconds
 
 
-
+    public string? host { get; set; } //specific host that will override the service host (in case of different endpoint)
     public int? port { get; set; }
     public int timeout { get; set; } // in milliseconds
 
