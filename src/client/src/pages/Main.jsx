@@ -171,20 +171,54 @@ function Main() {
                         {
                             stack.services.map((service, index2) => (
                                 <>
+                                    {
+                                        (countChannelsInService(service) > 1)
+                                        ?
                                     <tr>
                                         <td key={index2} rowSpan={countChannelsInService(service)}>{service.name} {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} </td>
                                     </tr>
+                                        :
+                                            <tr>
+                                                <td>{service.name}</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td>
+                                            </tr>
+                                        
+                                    }
+                                    
+                                    
+
+
+                                    
                                     {
                                         service.sensors.map((sensor, index3) => (
                                             <>
+                                                {
+                                                    (countChannelsInSensor(sensor) > 1)
+                                                    ?
                                                 <tr>
                                                     <td rowSpan={countChannelsInSensor(sensor)}>{sensor.name} {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
                                                 </tr>
+                                                    :
+                                                    <>
+                                                        <tr>
+                                                            <td>{sensor.name}</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td style={{color:"red"}}>The CHANNELS have not been created yet</td>
+                                                        </tr>
+                                                        </>
+                                                }
                                                 
                                                 {
                                                     sensor.channels.map((channel, index4) => (
                                                         <>
-                                                            {console.log(channel.current_metric)}
                                                             <tr key={index4}>
                                                             
                                                             {/* <td><b style={{color:"red"}}>{sensor.name}</b></td> */}
@@ -192,7 +226,7 @@ function Main() {
                                                             <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                             <td>{channel.current_metric.latency} ms</td>
                                                             <td>
-                                                                <Button style={{width: "110px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
+                                                                <Button size="sm" style={{width: "100px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
                                                                     {channel.current_metric.value} {channel.unit}</Button>
                                                                 </td>
                                                                 <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>

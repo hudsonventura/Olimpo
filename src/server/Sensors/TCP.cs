@@ -22,23 +22,39 @@ public class TCP : ISensor
                 var completedTask = await Task.WhenAny(connectTask, timeoutTask);
                 if (completedTask == timeoutTask)
                 {
-                    metric = new Metric() { message = $"The port {sensor.port} is not opened or a timeout was got"};
+                    metric = new Metric() { 
+                        message = $"The port {sensor.port} is not opened or a timeout was got",
+                        latency = stopwatch.ElapsedMilliseconds,
+                        error_code = 1
+                    };
                 }
 
                 var isPortOpen = client.Connected;
                 if (isPortOpen)
                 {
-                    metric = new Metric() { message = "Success", latency = stopwatch.ElapsedMilliseconds , value = stopwatch.ElapsedMilliseconds };
+                    metric = new Metric() { 
+                        message = "Success", 
+                        latency = stopwatch.ElapsedMilliseconds, 
+                        value = stopwatch.ElapsedMilliseconds 
+                    };
                 }
                 else
                 {
-                    metric = new Metric() { message = $"The port {sensor.port} is not opened or a timeout was got" };
+                    metric = new Metric() { 
+                        message = $"The port {sensor.port} is not opened or a timeout was got",
+                        latency = stopwatch.ElapsedMilliseconds,
+                        error_code = 1
+                    };
                 }
             }
         }
         catch(Exception error)
         {
-            metric = new Metric(){ message = error.Message};
+            metric = new Metric(){ 
+                message = error.Message,
+                latency = stopwatch.ElapsedMilliseconds,
+                error_code = 1
+            };
         }
         finally{
             stopwatch.Stop();
