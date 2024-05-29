@@ -35,10 +35,10 @@ builder.Services.AddControllers()
 //CORS
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowLocalhost3000",
+        options.AddPolicy("AllowAll",
             builder =>
             {
-                builder.WithOrigins("http://localhost:3000")
+                builder.AllowAnyOrigin()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             });
@@ -61,7 +61,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors("AllowLocalhost3000"); // Aplica a política de CORS específica
+app.UseCors("AllowAll"); // Aplica a política de CORS específica
 
 
 

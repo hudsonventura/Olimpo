@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import logo from './../logo.svg';
 
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -9,6 +11,8 @@ import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Badge from 'react-bootstrap/Badge';
+
+import Toasty from '../components/Toasty';
 
 
 
@@ -113,14 +117,38 @@ function Main() {
     };
 
 
-    
-      
+    //funções de contagem para os contadores superiores
+    const countChannelsInAllStacks = (data) => {
+        return data.reduce((stackTotal, stack) => {
+            return stackTotal + countChannelsInStack(stack);
+        }, 0);
+    };
+
+    const countChannelsInAllStacks_Success = (data) => {
+        return data.reduce((stackTotal, stack) => {
+            return stackTotal + countChannelsInStack_Success(stack);
+        }, 0);
+    };
+
+    const countChannelsInAllStacks_Error = (data) => {
+        return data.reduce((stackTotal, stack) => {
+            return stackTotal + countChannelsInStack_Error(stack);
+        }, 0);
+    };
 
 
 
     return (
     <>
+        <Container style={{marginTop: '15px'}}>
+            <Row>
+                <Toasty type="success" value={countChannelsInAllStacks_Success(data)} text={"Ok"}></Toasty>
+                <Toasty type="warning" value="Fake" text={"teste"}></Toasty>
+                <Toasty type="danger"  value={countChannelsInAllStacks_Error(data)} text={"Error"}></Toasty>
+            </Row>
+        </Container>
         <Container fluid style={{marginTop: '15px'}}>
+            
         <Table bordered hover size="sm">
             <thead>
                 <tr>
