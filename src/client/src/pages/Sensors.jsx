@@ -5,7 +5,7 @@ function Sensors() {
   return (
     <>
       <Navigation />
-      <h1>404 - Not Found</h1>
+      <h1>Sensors page</h1>
     </>
   );
 }

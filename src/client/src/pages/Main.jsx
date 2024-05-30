@@ -133,7 +133,7 @@ function Main() {
                                                         <Row>
                                                             {
                                                                 sensor.channels.map((channel, index4) => (
-                                                                        <Channel value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
+                                                                        <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
                                                                 ))
                                                             }
                                                         </Row>
