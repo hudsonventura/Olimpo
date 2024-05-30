@@ -5,63 +5,20 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Badge from 'react-bootstrap/Badge';
 
 import ToastyGroup from '../components/ToastyGroup';
 
 import Navigation from '../components/Navigation';
-import CalcChannels, {
+import CalcChannels, { countChannelsInAllStacks_Success, countChannelsInAllStacks_Error } from '../components/CalcChannels';
 
-    countChannelsInAllStacks_Success, 
-    countChannelsInAllStacks_Error,
-
-    countChannelsInStack, 
-    countChannelsInStack_Error, 
-
-    countChannelsInService, 
-    countChannelsInService_Error, 
-
-    countChannelsInSensor, 
-    countChannelsInSensor_Error, 
-    } from '../components/CalcChannels';
+import GetMainData from '../components/GetMainData';
 
 function ListErrors() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        // URL da API
-        const url = 'https://10.10.1.100:5001/Api';
-    
-        // Função para buscar dados
-        const fetchData = async () => {
-          try {
-            const response = await fetch(url);
-    
-            if (!response.ok) {
-              throw new Error(`Erro: ${response.status}`);
-            }
-    
-            const jsonData = await response.json();
-            setData(jsonData);
-          } catch (error) {
-            setError(error.message);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        // Configura um intervalo para buscar dados a cada segundo
-        const intervalId = setInterval(fetchData, 1000);
-    
-        // Chama a função fetchData imediatamente na montagem
-        fetchData();
-    
-        // Limpa o intervalo quando o componente desmontar
-        return () => clearInterval(intervalId);
-      }, []); 
+    GetMainData({setData, setLoading, setError});
     
     if (loading) {
         return <div>Carregando...</div>;

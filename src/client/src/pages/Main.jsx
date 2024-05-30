@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 import Badge from 'react-bootstrap/Badge';
 
 import ToastyGroup from '../components/ToastyGroup';
@@ -27,7 +26,8 @@ import CalcChannels, {
     countChannelsInSensor_Error, 
     } from '../components/CalcChannels';
 
-
+import GetMainData from '../components/GetMainData';
+import Col from 'react-bootstrap/esm/Col';
 
 
 function Main() {
@@ -35,48 +35,35 @@ function Main() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    GetMainData({setData, setLoading, setError});
+    
 
-    useEffect(() => {
-        // URL da API
-        const url = 'https://10.10.1.100:5001/Api';
-    
-        // Função para buscar dados
-        const fetchData = async () => {
-          try {
-            const response = await fetch(url);
-    
-            if (!response.ok) {
-              throw new Error(`Erro: ${response.status}`);
-            }
-    
-            const jsonData = await response.json();
-            setData(jsonData);
-          } catch (error) {
-            setError(error.message);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        // Configura um intervalo para buscar dados a cada segundo
-        const intervalId = setInterval(fetchData, 1000);
-    
-        // Chama a função fetchData imediatamente na montagem
-        fetchData();
-    
-        // Limpa o intervalo quando o componente desmontar
-        return () => clearInterval(intervalId);
-      }, []); 
-    
     if (loading) {
-        return <div>Carregando...</div>;
+        return (
+            <>
+                <div style={{position: 'fixed', left: '50%', top: '50%'}}>
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            </>
+        );
     }
 
     if (error) {
-        return <div>Erro: {error}</div>;
+        return (
+            <>
+                <div style={{position: 'fixed', left: '40%', top: '45%'}}>
+                    <Alert variant='danger'>
+                        {error} - Verify the connection
+                    </Alert>
+                </div>
+                
+            </>
+        );
     }
 
-
+    
     
 
 
@@ -119,11 +106,7 @@ function Main() {
                                             </tr>
                                         
                                     }
-                                    
-                                    
 
-
-                                    
                                     {
                                         service.sensors.map((sensor, index3) => (
                                             <>
@@ -133,7 +116,7 @@ function Main() {
                                                         <Row>
                                                             {
                                                                 sensor.channels.map((channel, index4) => (
-                                                                        <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
+                                                                    <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
                                                                 ))
                                                             }
                                                         </Row>
