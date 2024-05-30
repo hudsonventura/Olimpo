@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Badge from 'react-bootstrap/Badge';
 
-import Toasty from '../components/Toasty';
-import Channel from '../components/Channel';
+import ToastyGroup from '../components/ToastyGroup';
 
 
 
@@ -140,19 +135,8 @@ function ListErrors() {
 
     return (
     <>
-        <Container style={{marginTop: '15px'}}>
-            <Row>
-                <Col>
-                    <Toasty type="success" value={countChannelsInAllStacks_Success(data)} text={"Ok"} title="Number of channels online"></Toasty>
-                </Col>
-                <Col>
-                    <Toasty type="warning" value="Fake" text={"Warnning"} title="Number of channels with some alert"></Toasty>
-                </Col>
-                <Col>
-                    <Toasty type="danger"  value={countChannelsInAllStacks_Error(data)} text={"Error"} title="Number of channels offline / error"></Toasty>
-                </Col>
-            </Row>
-        </Container>
+        <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/>
+
         <Container fluid style={{marginTop: '15px'}}>
             
         <Table bordered hover size="sm">
