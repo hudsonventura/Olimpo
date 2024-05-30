@@ -16,7 +16,7 @@ import Channel from '../components/Channel';
 
 
 
-function Main() {
+function ListErrors() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -140,7 +140,6 @@ function Main() {
 
     return (
     <>
-        
         <Container style={{marginTop: '15px'}}>
             <Row>
                 <Col>
@@ -186,34 +185,16 @@ function Main() {
                                     </tr>
                                         :
                                             <tr>
-                                                {/* <td>{service.name}</td>
+                                                <td>{service.name}</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
-                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td> */}
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td colSpan={5}>
-                                                    <Row>
-                                                        
-                                                            <Channel value={10} title={"HTTPS - Site - Days for certifier expire"} type="danger" unit="days"></Channel>
-                                                        
-                                                            <Channel value={200} title={"HTTPS - Site - SSL check on"} type="warning" unit=""></Channel>
-                                                        
-                                                            <Channel value={3} title={"Ping"} type="success" unit="ms"></Channel>
-                                                        
-                                                    </Row>
-                                                </td>
+                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td>
                                             </tr>
                                         
                                     }
-                                    
-                                    
-
-
-                                    
                                     {
                                         service.sensors.map((sensor, index3) => (
                                             <>
@@ -275,4 +256,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default ListErrors;
