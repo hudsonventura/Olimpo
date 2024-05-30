@@ -8,8 +8,6 @@ import NotFound from './pages/NotFound';
 import Sensors from './pages/Sensors.jsx';
 import Sensor from './pages/Sensor.jsx';
 
-import Navigation from './components/Navigation';
-
 
 const router = createBrowserRouter(
     [
@@ -43,7 +41,6 @@ function App() {
 
   return (
     <>
-        <Navigation />
         <RouterProvider router={router} />
     </>
   );

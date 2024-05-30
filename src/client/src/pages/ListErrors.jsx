@@ -9,7 +9,21 @@ import Badge from 'react-bootstrap/Badge';
 
 import ToastyGroup from '../components/ToastyGroup';
 
+import Navigation from '../components/Navigation';
+import CalcChannels, {
 
+    countChannelsInAllStacks_Success, 
+    countChannelsInAllStacks_Error,
+
+    countChannelsInStack, 
+    countChannelsInStack_Error, 
+
+    countChannelsInService, 
+    countChannelsInService_Error, 
+
+    countChannelsInSensor, 
+    countChannelsInSensor_Error, 
+    } from '../components/CalcChannels';
 
 function ListErrors() {
 
@@ -58,83 +72,13 @@ function ListErrors() {
     }
 
 
-    // Funções de contagem de sensor
-    const countChannelsInSensor = (sensor) => {
-        return sensor.channels.length+1;
-    };
-    const countChannelsInSensor_Error = (sensor) => {
-        return sensor.channels.filter(channel => channel.current_metric?.error_code > 0).length;
-    };
-
-    const countChannelsInSensor_Success = (sensor) => {
-        return sensor.channels.filter(channel => channel.current_metric?.error_code == 0).length;
-    };
-
-  
-    // Funções de contagem de serviço
-    const countChannelsInService = (service) => {
-        return service.sensors.reduce((sensorTotal, sensor) => {
-        return sensorTotal + countChannelsInSensor(sensor);
-        }, 1);
-    };
-
-    const countChannelsInService_Error = (service) => {
-        return service.sensors.reduce((sensorTotal, sensor) => {
-        return sensorTotal + countChannelsInSensor_Error(sensor);
-        }, 0);
-    };
-
-    const countChannelsInService_Success = (service) => {
-        return service.sensors.reduce((sensorTotal, sensor) => {
-        return sensorTotal + countChannelsInSensor_Success(sensor);
-        }, 0);
-    };
-  
-
-
-    // Funções de contagem de stack
-    const countChannelsInStack = (stack) => {
-        return stack.services.reduce((serviceTotal, service) => {
-        return serviceTotal + countChannelsInService(service);
-        }, 1);
-    };
-
-    const countChannelsInStack_Error = (stack) => {
-        return stack.services.reduce((serviceTotal, service) => {
-        return serviceTotal + countChannelsInService_Error(service);
-        }, 0);
-    };
-
-    const countChannelsInStack_Success = (stack) => {
-        return stack.services.reduce((serviceTotal, service) => {
-        return serviceTotal + countChannelsInService_Success(service);
-        }, 0);
-    };
-
-
-    //funções de contagem para os contadores superiores
-    const countChannelsInAllStacks = (data) => {
-        return data.reduce((stackTotal, stack) => {
-            return stackTotal + countChannelsInStack(stack);
-        }, 0);
-    };
-
-    const countChannelsInAllStacks_Success = (data) => {
-        return data.reduce((stackTotal, stack) => {
-            return stackTotal + countChannelsInStack_Success(stack);
-        }, 0);
-    };
-
-    const countChannelsInAllStacks_Error = (data) => {
-        return data.reduce((stackTotal, stack) => {
-            return stackTotal + countChannelsInStack_Error(stack);
-        }, 0);
-    };
+    
 
 
 
     return (
     <>
+        <Navigation data={data} />
         <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/>
 
         <Container fluid style={{marginTop: '15px'}}>
@@ -155,71 +99,41 @@ function ListErrors() {
             <tbody>
                 {data.map((stack, index) => (
                     <>
-                        <tr>
-                            <td key={index} rowSpan={countChannelsInStack(stack)}>{stack.name} {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} </td>
-                        </tr>
                         {
                             stack.services.map((service, index2) => (
                                 <>
                                     {
-                                        (countChannelsInService(service) > 1)
-                                        ?
-                                    <tr>
-                                        <td key={index2} rowSpan={countChannelsInService(service)}>{service.name} {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} </td>
-                                    </tr>
-                                        :
-                                            <tr>
-                                                <td>{service.name}</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td style={{color:"red"}}>The SENSORS have not been added yet. Add it manually</td>
-                                            </tr>
-                                        
-                                    }
-                                    {
                                         service.sensors.map((sensor, index3) => (
                                             <>
                                                 {
-                                                    (countChannelsInSensor(sensor) > 1)
-                                                    ?
-                                                <tr>
-                                                    <td rowSpan={countChannelsInSensor(sensor)}>{sensor.name} {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
-                                                </tr>
-                                                    :
-                                                    <>
-                                                        <tr>
-                                                            <td>{sensor.name}</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td style={{color:"red"}}>The CHANNELS have not been created yet</td>
-                                                        </tr>
-                                                        </>
-                                                }
-                                                
-                                                {
                                                     sensor.channels.map((channel, index4) => (
                                                         <>
-                                                            <tr key={index4}>
+                                                            {
+                                                                (channel.current_metric.error_code > 0)
+                                                                ?
+                                                                <>
+                                                                    <tr key={index4}>
+                                                                    <td>{stack.name}</td>
+                                                                    <td>{service.name}</td>
+                                                                    <td>{sensor.name}</td>
+                                                                    <td>{channel.name}</td>
+                                                                    <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
+                                                                    <td>{channel.current_metric.latency} ms</td>
+                                                                    <td>
+                                                                        <Button size="sm" style={{width: "100px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
+                                                                            {channel.current_metric.value} {channel.unit}</Button>
+                                                                        </td>
+                                                                        <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>
+                                                                            <OverlayTrigger placement="left" delay={{ show: 100, hide: 400 }} overlay={<Tooltip id="button-tooltip-2">{channel.current_metric.message}</Tooltip>}>
+                                                                                <text>{(channel.current_metric.message.length > 50) ? channel.current_metric.message.substr(0, 50) + ' ...': channel.current_metric.message}</text>
+                                                                            </OverlayTrigger>
+                                                                        </td>
+                                                                    </tr>
+                                                                </>
+                                                                :
+                                                                <></>
+                                                            }
                                                             
-                                                            {/* <td><b style={{color:"red"}}>{sensor.name}</b></td> */}
-                                                            <td>{channel.name}</td>
-                                                            <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
-                                                            <td>{channel.current_metric.latency} ms</td>
-                                                            <td>
-                                                                <Button size="sm" style={{width: "100px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
-                                                                    {channel.current_metric.value} {channel.unit}</Button>
-                                                                </td>
-                                                                <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>
-                                                                    <OverlayTrigger placement="left" delay={{ show: 100, hide: 400 }} overlay={<Tooltip id="button-tooltip-2">{channel.current_metric.message}</Tooltip>}>
-                                                                        <text>{(channel.current_metric.message.length > 50) ? channel.current_metric.message.substr(0, 50) + ' ...': channel.current_metric.message}</text>
-                                                                    </OverlayTrigger>
-                                                                </td>
-                                                            </tr>
                                                         </>
                                                     ))
                                                 }
