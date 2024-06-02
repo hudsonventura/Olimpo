@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
@@ -7,15 +7,11 @@ import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 import Badge from 'react-bootstrap/Badge';
 
-import ToastyGroup from '../components/ToastyGroup';
 import Channel from '../components/Channel';
+import EditStack from '../components/EditStack';
 
 import Navigation from '../components/Navigation';
 import CalcChannels, {
-
-    countChannelsInAllStacks_Success, 
-    countChannelsInAllStacks_Error,
-
     countChannelsInStack, 
     countChannelsInStack_Error, 
 
@@ -27,7 +23,16 @@ import CalcChannels, {
     } from '../components/CalcChannels';
 
 import GetMainData from '../components/GetMainData';
-import Col from 'react-bootstrap/esm/Col';
+import Tips from '../components/Tips';
+
+import { FaPlus } from "react-icons/fa6";
+import { FaSortUp, FaSortDown } from "react-icons/fa";
+import { TiEdit } from "react-icons/ti";
+
+
+
+
+
 
 
 function Main() {
@@ -37,6 +42,28 @@ function Main() {
     const [error, setError] = useState(null);
     GetMainData({setData, setLoading, setError});
     
+    const [showModalStack, setShowModalStack] = useState(false);
+    const [editStack, setEditStack] = useState(0);
+    const handleEditStack = (stack) => {
+        setEditStack(stack);
+        setShowModalStack(true);
+    }
+
+    const [showModalService, setShowModalService] = useState(false);
+    const [editService, setEditService] = useState(0);
+    const handleEditService = (Service) => {
+        setEditService(Service);
+        setShowModalService(true);
+    }
+
+    const [showModalSensor, setShowModalSensor] = useState(false);
+    const [editSensor, setEditSensor] = useState(0);
+    const handleEditSensor = (Sensor) => {
+        setEditSensor(Sensor);
+        setShowModalSensor(true);
+    }
+
+
 
     if (loading) {
         return (
@@ -65,6 +92,8 @@ function Main() {
 
     
     
+    
+    
 
 
 
@@ -73,22 +102,41 @@ function Main() {
         <Navigation data={data} />
         {/* <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/> */}
         <Container fluid style={{marginTop: '15px'}}>
+        <EditStack stack={editStack} setStack={setEditStack} showModal={showModalStack} setShowModal={setShowModalStack} />
         
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
-                <th>Stack</th>
-                <th>Service</th>
-                <th>Sensor</th>
+                <th>Stack   <Tips message="Add new stack"><FaPlus onClick={() => setShowModalStack(true)} /></Tips></th>
+                <th>Service <Tips message="Add new service"><FaPlus onClick={() => setShowModalService(true)} /></Tips></th>
+                <th>Sensor  <Tips message="Add new sensor"><FaPlus onClick={() => setShowModalSensor(true)} /></Tips></th>
                 <th>Channel</th>
                 </tr>
             </thead>
             <tbody>
                 {data.map((stack, index) => (
                     <>
-                        <tr>
-                            <td key={index} rowSpan={countChannelsInStack(stack)}>{stack.name} {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} </td>
-                        </tr>
+                        {
+                            (stack.services.length == 0)
+                            ?
+                            <tr>
+                                <td>{stack.name}</td>
+                                <td><FaPlus onClick={() => setShowModalStack(true)} /></td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            :
+                            <tr>
+                                <td key={index} rowSpan={countChannelsInStack(stack)}>
+                                    <TiEdit onClick={() => handleEditStack(stack)} /> 
+                                    <FaSortUp /> 
+                                    <FaSortDown /> 
+                                    <a> {stack.name} </a>
+                                    {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} 
+                                </td>
+                            </tr>
+                        }
+                        
                         {
                             stack.services.map((service, index2) => (
                                 <>
@@ -100,7 +148,7 @@ function Main() {
                                     </tr>
                                         :
                                             <tr>
-                                                <td>-</td>
+                                                <td><FaPlus onClick={() => setShowModalStack(true)} /></td>
                                                 <td>-</td>
                                                 <td>-</td>
                                             </tr>

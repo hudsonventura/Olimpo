@@ -1,6 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import Navigation from '../components/Navigation';
+
 function Sensor() {
     var {id} = useParams();
 
@@ -12,7 +14,7 @@ function Sensor() {
 
     return (
         <>
-        
+        <Navigation data={null} />
         <h1>Sensor : {id}</h1>
         <button onClick={PostForm}>Post form</button>
         </>

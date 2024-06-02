@@ -20,7 +20,7 @@ public class APIController : ControllerBase
     [HttpGet("/Api/")]
     public ActionResult Get()
     {
-        List<Stack> stacks = db.stacks
+        var stacks = db.stacks
             .Include(x => x.services)
             .ThenInclude(x => x.sensors)
             .ThenInclude(x => x.channels)

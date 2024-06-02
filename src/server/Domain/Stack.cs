@@ -1,11 +1,13 @@
 namespace Olimpo.Domain;
 
-public class Stack : Hierarquical // like directory
+public class Stack // like directory
 {
-    public Guid id { get; set; }
+    public Guid id { get; set; } = Guid.NewGuid();
 
     public string name { get; set; }
 
+    public int order { get; set; }
 
-    public List<Service> services { get; set; }
+
+    public List<Service>? services { get; set; }
 }
