@@ -1,44 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-export function GetMainData({setData, setLoading, setError}) {
-   
+import { AppContext } from '../components/AppContext';
+
+export function GetMainData({ setData, setLoading, setError }) {
+
+    const { settings } = useContext(AppContext);
 
     useEffect(() => {
-        // URL da API
-        const url = 'https://localhost:5001/Api';
-    
+        if (!settings) {
+            return;
+        }
+
         // Função para buscar dados
         const fetchData = async () => {
-          try {
-            const response = await fetch(url);
-    
-            if (!response.ok) {
-              throw new Error(`Erro: ${response.status}`);
+            try {
+                const response = await fetch(`${settings.backend_url}/Api`);
+
+                if (!response.ok) {
+                    throw new Error(`Erro: ${response.status}`);
+                }
+
+                const jsonData = await response.json();
+                setData(jsonData);
+            } catch (error) {
+                setError(error.message);
+                console.log('erro')
+            } finally {
+                setLoading(false);
             }
-    
-            const jsonData = await response.json();
-            setData(jsonData);
-          } catch (error) {
-            setError(error.message);
-            console.log('erro')
-          } finally {
-            setLoading(false);
-          }
         };
-    
+
         // Configura um intervalo para buscar dados a cada segundo
         const intervalId = setInterval(fetchData, 1000);
-    
+
         // Chama a função fetchData imediatamente na montagem
         fetchData();
 
-       
-    
+
+
         // Limpa o intervalo quando o componente desmontar
         return () => clearInterval(intervalId);
-      }, []); 
+    }, [settings]);
 
-    
+
     return (<></>);
 }
 
