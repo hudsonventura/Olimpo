@@ -15,12 +15,10 @@ public class StackController : ControllerBase
     }
 
     [HttpPost("/stack/")]
-    public ActionResult CreateStack(Stack? stack){
+    public ActionResult Create(Stack? stack){
         try
         {
-            var stack_db = db.stacks.Where(x => x.id == stack.id).FirstOrDefault();
-            db.Entry(stack_db).CurrentValues.SetValues(stack);
-            db.Update(stack_db);
+            db.stacks.Add(stack);
             db.SaveChanges();
             
             return Created($"/stack/{stack.id}", stack);
@@ -31,5 +29,22 @@ public class StackController : ControllerBase
         }
     }
 
+
+    [HttpPut("/stack/{id}")]
+    public ActionResult Update(Guid id, Stack? stack){
+        try
+        {
+            var stack_db = db.stacks.Where(x => x.id == stack.id).FirstOrDefault();
+            db.Entry(stack_db).CurrentValues.SetValues(stack);
+            db.Update(stack_db);
+            db.SaveChanges();
+            
+            return Ok(stack_db);
+        }
+        catch (System.Exception error)
+        {
+            return BadRequest(error);
+        }
+    }
     
 }

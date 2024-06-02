@@ -107,7 +107,7 @@ function Main() {
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
-                <th>Stack   <Tips message="Add new stack"><FaPlus onClick={() => setShowModalStack(true)} /></Tips></th>
+                <th>Stack   <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({name: null, id: null})} /></Tips></th>
                 <th>Service <Tips message="Add new service"><FaPlus onClick={() => setShowModalService(true)} /></Tips></th>
                 <th>Sensor  <Tips message="Add new sensor"><FaPlus onClick={() => setShowModalSensor(true)} /></Tips></th>
                 <th>Channel</th>
@@ -120,7 +120,12 @@ function Main() {
                             (stack.services.length == 0)
                             ?
                             <tr>
-                                <td>{stack.name}</td>
+                                <td>
+                                    <TiEdit onClick={() => handleEditStack(stack)} /> 
+                                    <FaSortUp /> 
+                                    <FaSortDown /> 
+                                    <a> {stack.name} </a>
+                                </td>
                                 <td><FaPlus onClick={() => setShowModalStack(true)} /></td>
                                 <td>-</td>
                                 <td>-</td>

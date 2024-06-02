@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 
 
 import Button from 'react-bootstrap/Button';
@@ -6,13 +6,17 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 
+import { AppContext } from '../components/AppContext';
+
 
 
 function EditStack({stack, setStack, showModal, setShowModal}) {
 
+    const {settings} = useContext(AppContext);
+
+
     const formRef = useRef(null);
 
-    
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setStack(prevStack => ({
@@ -30,24 +34,47 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
                 data[key] = value;
         });
 
+        var url = settings.backend_url;
+
+        //creating stack
+        if(data['id'] == undefined){
+            fetch(`${url}/stack/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(data => {
+                console.log('Success:', data);
+                setShowModal(false); // Fechar o modal após o sucesso
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        //updating stack
+        else{
+            fetch(`${url}/stack/${data['id']}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(data => {
+                console.log('Success:', data);
+                setShowModal(false); // Fechar o modal após o sucesso
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
 
 
-        var url = 'https://10.10.1.100:5001'
+        
 
-        fetch(url+'/stack/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-        .then(data => {
-            console.log('Success:', data);
-            setShowModal(false); // Fechar o modal após o sucesso
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        
     }
 
     return (
@@ -84,6 +111,12 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
             </Modal.Footer>
             </Modal>
     ); 
+}
+
+
+
+function Edit(){
+    
 }
 
 export default EditStack;

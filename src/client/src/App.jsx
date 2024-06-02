@@ -1,6 +1,7 @@
 import React, {createContext, useState} from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import {AppProvider} from './components/AppContext';
 
 import Main from './pages/Main';
 import ListErrors from './pages/ListErrors';
@@ -41,7 +42,9 @@ function App() {
 
   return (
     <>
-        <RouterProvider router={router} />
+        <AppProvider>
+            <RouterProvider router={router} />
+        </AppProvider>
     </>
   );
 }
