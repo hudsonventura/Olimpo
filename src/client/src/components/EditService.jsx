@@ -6,11 +6,11 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 
-import { AppContext } from '../components/AppContext';
+import { AppContext } from './AppContext';
 
 
 
-function EditStack({stack, setStack, showModal, setShowModal}) {
+function EditService({service, setService, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
 
@@ -19,8 +19,8 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setStack(prevStack => ({
-            ...prevStack,
+        setService(prevService => ({
+            ...prevService,
             [name]: value
         }));
     };
@@ -48,9 +48,9 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
 
         var url = settings.backend_url;
 
-        //creating stack
+        //creating service
         if(data['id'] == undefined){
-            fetch(`${url}/stack/`, {
+            fetch(`${url}/service/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,9 +65,9 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
                 console.error('Error:', error);
             });
         }
-        //updating stack
+        //updating service
         else{
-            fetch(`${url}/stack/${data['id']}`, {
+            fetch(`${url}/service/${data['id']}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -98,40 +98,28 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
             >
             <Modal.Header closeButton onClick={() => setShowModal(false)}>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <>
-                    {
-                        (stack.id == undefined)
-                        ?
-                            `Creating stack`
-                        :
-                            <>
-                                Updating stack <b>{stack.name}</b> <p style={{fontSize: '11px'}}>{stack.id}</p>
-                            </>
-                            
-                    }
-                    </>
-                    
+                    Modal heading
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form ref={formRef}>
                 <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Stack Name</Form.Label>
+                <Form.Label>Service Name</Form.Label>
                 <Form.Control
                     type="text"
                     placeholder="Just an identification"
                     autoFocus
                     name='name'
-                    value={stack.name}
+                    value={service.name}
                     onChange={handleInputChange}
                 />
-                <Form.Control type="hidden" name='id' value={stack.id} />
+                <Form.Control type="hidden" name='id' value={service.id} />
                 </Form.Group>
             </Form>
             </Modal.Body>
             <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button variant='danger' onClick={() => handleDelete()}>Delete TO IMPLEMENT</Button> {/*//TODO: Implement delete stack*/}
+                    <Button variant='danger' onClick={() => handleDelete()}>Delete TO IMPLEMENT</Button> {/*//TODO: Implement delete service*/}
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button variant='outline-dark' onClick={() => setShowModal(false)}>Cancel</Button>
@@ -148,4 +136,4 @@ function Edit(){
     
 }
 
-export default EditStack;
+export default EditService;

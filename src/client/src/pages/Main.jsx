@@ -9,6 +9,7 @@ import Badge from 'react-bootstrap/Badge';
 
 import Channel from '../components/Channel';
 import EditStack from '../components/EditStack';
+import EditService from '../components/EditService';
 
 import Navigation from '../components/Navigation';
 import CalcChannels, {
@@ -51,8 +52,8 @@ function Main() {
 
     const [showModalService, setShowModalService] = useState(false);
     const [editService, setEditService] = useState(0);
-    const handleEditService = (Service) => {
-        setEditService(Service);
+    const handleEditService = (service) => {
+        setEditService(service);
         setShowModalService(true);
     }
 
@@ -103,13 +104,14 @@ function Main() {
         {/* <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/> */}
         <Container fluid style={{marginTop: '15px'}}>
         <EditStack stack={editStack} setStack={setEditStack} showModal={showModalStack} setShowModal={setShowModalStack} />
+        <EditService service={editService} setStack={setEditService} showModal={showModalService} setShowModal={setShowModalService} />
         
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
                 <th>Stack   <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({name: null, id: null})} /></Tips></th>
-                <th>Service <Tips message="Add new service"><FaPlus onClick={() => setShowModalService(true)} /></Tips></th>
-                <th>Sensor  <Tips message="Add new sensor"><FaPlus onClick={() => setShowModalSensor(true)} /></Tips></th>
+                <th>Service <Tips message="Add new service"><FaPlus onClick={() => handleEditService({name: null, id: null})} /></Tips></th>
+                <th>Sensor  <Tips message="Add new sensor"><FaPlus onClick={() => handleEditSensor({name: null, id: null})} /></Tips></th>
                 <th>Channel</th>
                 </tr>
             </thead>
@@ -121,12 +123,12 @@ function Main() {
                             ?
                             <tr>
                                 <td>
-                                    <TiEdit onClick={() => handleEditStack(stack)} /> 
+                                    <TiEdit onClick={() => handleEditStack(stack)} />
                                     <FaSortUp /> 
                                     <FaSortDown /> 
                                     <a> {stack.name} </a>
                                 </td>
-                                <td><FaPlus onClick={() => setShowModalStack(true)} /></td>
+                                <td><FaPlus onClick={() => setShowModalService(true)} /></td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
@@ -149,7 +151,13 @@ function Main() {
                                         (countChannelsInService(service) > 1)
                                         ?
                                     <tr>
-                                        <td key={index2} rowSpan={countChannelsInService(service)}>{service.name} {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} </td>
+                                        <td key={index2} rowSpan={countChannelsInService(service)}>
+                                            <TiEdit onClick={() => handleEditService(service)} /> 
+                                            <FaSortUp /> 
+                                            <FaSortDown /> 
+                                            {service.name} 
+                                            {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} 
+                                        </td>
                                     </tr>
                                         :
                                             <tr>
