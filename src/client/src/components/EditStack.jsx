@@ -107,10 +107,8 @@ function EditStack({stack, setStack, showModal, setShowModal}) {
                             <>
                                 Updating stack <b>{stack.name}</b> <p style={{fontSize: '11px'}}>{stack.id}</p>
                             </>
-                            
                     }
                     </>
-                    
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

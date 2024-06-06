@@ -74,8 +74,9 @@ function EditDevice({device, setDevice, showModal, setShowModal}) {
                 },
                 body: JSON.stringify(data),
             })
-            .then(data => {
-                console.log('Success:', data);
+            .then(response => response.json()) // Parse the JSON body from the response
+            .then(body => {
+                console.log('Success:', body); // Log the parsed body
                 setShowModal(false); // Fechar o modal após o sucesso
             })
             .catch((error) => {
@@ -98,24 +99,42 @@ function EditDevice({device, setDevice, showModal, setShowModal}) {
             >
             <Modal.Header closeButton onClick={() => setShowModal(false)}>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Modal heading
+                    <>
+                    {
+                        (device.id == undefined)
+                        ?
+                            `Creating stack`
+                        :
+                            <>
+                                Updating device <b>{device.name}</b> <p style={{fontSize: '11px'}}>{device.id}</p>
+                            </>
+                    }
+                    </>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form ref={formRef}>
-                <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Device Name</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Just an identification"
-                    autoFocus
-                    name='name'
-                    value={device.name}
-                    onChange={handleInputChange}
-                />
                 <Form.Control type="hidden" name='id' value={device.id} />
+
+                <Form.Group className="mb-3" controlId="name">
+                    <Form.Label>Device Name</Form.Label>
+                    <Form.Control type="text" placeholder="Just an identification" autoFocus
+                        name='name'
+                        value={device.name}
+                        onChange={handleInputChange}
+                    />
                 </Form.Group>
-            </Form>
+
+                <Form.Group className="mb-3" controlId="name">
+                    <Form.Label>Hostname<small>, hostname or IP without port and protocol</small></Form.Label>
+                    <Form.Control type="text" placeholder="Host, hostname or IP without port and protocol" autoFocus
+                        name='host'
+                        value={device.host}
+                        onChange={handleInputChange}
+                    />
+                </Form.Group>
+
+                </Form>
             </Modal.Body>
             <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', gap: '10px' }}>

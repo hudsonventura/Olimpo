@@ -12,5 +12,5 @@ public class Device
     public string host { get; set; }
     
 
-    public List<Sensor> sensors { get; set; }
+    public List<Sensor>? sensors { get; set; }
 }

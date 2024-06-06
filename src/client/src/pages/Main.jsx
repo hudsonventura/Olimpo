@@ -51,9 +51,9 @@ function Main() {
     }
 
     const [showModalDevice, setShowModalDevice] = useState(false);
-    const [editDevice, setEditDevice] = useState(0);
+    const [editDevice, setDevice] = useState(0);
     const handleEditDevice = (device) => {
-        setEditDevice(device);
+        setDevice(device);
         setShowModalDevice(true);
     }
 
@@ -104,7 +104,7 @@ function Main() {
         {/* <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/> */}
         <Container fluid style={{marginTop: '15px'}}>
         <EditStack stack={editStack} setStack={setEditStack} showModal={showModalStack} setShowModal={setShowModalStack} />
-        <EditDevice device={editDevice} setStack={setEditDevice} showModal={showModalDevice} setShowModal={setShowModalDevice} />
+        <EditDevice device={editDevice} setDevice={setDevice} showModal={showModalDevice} setShowModal={setShowModalDevice} />
         
         <Table bordered hover size="sm" responsive="lg">
             <thead>
