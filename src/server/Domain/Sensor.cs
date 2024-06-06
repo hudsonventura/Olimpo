@@ -25,7 +25,7 @@ public partial class Sensor
 
     
 
-    public List<Channel> channels { get; set; } = new List<Channel>();
+    public List<Channel>? channels { get; set; } = new List<Channel>();
 
 
 }
