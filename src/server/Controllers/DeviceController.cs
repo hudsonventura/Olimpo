@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Olimpo;
 using Olimpo.Domain;
 
@@ -14,11 +15,14 @@ public class DeviceController : ControllerBase
         this.db = db;
     }
 
-    [HttpPost("/device/")]
-    public ActionResult Create(Device? device){
+    [HttpPost("/device/{id_stack}")]
+    public ActionResult Create(Guid id_stack, Device? device){
         try
         {
-            db.devices.Add(device);
+            Stack stack = db.stacks.Where(stack => stack.id == id_stack)
+                            .Include(stack => stack.devices)
+                            .FirstOrDefault();
+            stack.devices.Add(device);
             db.SaveChanges();
             
             return Created($"/device/{device.id}", device);

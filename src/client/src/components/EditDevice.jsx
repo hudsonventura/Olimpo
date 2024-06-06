@@ -10,7 +10,7 @@ import { AppContext } from './AppContext';
 
 
 
-function EditDevice({device, setDevice, showModal, setShowModal}) {
+function EditDevice({stack, device, setDevice, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
 
@@ -50,15 +50,16 @@ function EditDevice({device, setDevice, showModal, setShowModal}) {
 
         //creating device
         if(data['id'] == undefined){
-            fetch(`${url}/device/`, {
+            fetch(`${url}/device/${data['id_stack']}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
             })
-            .then(data => {
-                console.log('Success:', data);
+            .then(response => response.json()) // Parse the JSON body from the response
+            .then(body => {
+                console.log('Success:', body); // Log the parsed body
                 setShowModal(false); // Fechar o modal após o sucesso
             })
             .catch((error) => {
@@ -103,7 +104,7 @@ function EditDevice({device, setDevice, showModal, setShowModal}) {
                     {
                         (device.id == undefined)
                         ?
-                            `Creating stack`
+                            `Creating device`
                         :
                             <>
                                 Updating device <b>{device.name}</b> <p style={{fontSize: '11px'}}>{device.id}</p>
@@ -114,7 +115,8 @@ function EditDevice({device, setDevice, showModal, setShowModal}) {
             </Modal.Header>
             <Modal.Body>
                 <Form ref={formRef}>
-                <Form.Control type="hidden" name='id' value={device.id} />
+                <Form.Control type="text" name='id' value={device.id} /> edive
+                <Form.Control type="text" name='id_stack' value={stack.id} /> stack
 
                 <Form.Group className="mb-3" controlId="name">
                     <Form.Label>Device Name</Form.Label>
