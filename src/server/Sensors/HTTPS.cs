@@ -8,7 +8,7 @@ namespace Olimpo.Sensors;
 
 public class HTTPS : ISensor
 {
-    public async Task<List<Channel>> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         List<Channel> channels = new List<Channel>();
         string info = (sensor.SSL_Verification_Check == true) ? "SSL check on" : "SSL check off";

@@ -2,7 +2,7 @@ using Olimpo.Sensors;
 
 namespace Olimpo.Domain;
 
-public class Service  // like a file
+public class Device
 {
     public Guid id { get; set; }
 

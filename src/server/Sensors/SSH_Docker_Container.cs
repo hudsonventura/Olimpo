@@ -7,7 +7,7 @@ namespace Olimpo.Sensors;
 public class SSH_DOCKER_CONTAINER : ISensor
 {
 
-    public async Task<List<Channel>> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         List<Channel> channels = new List<Channel>();
         string command = $"sudo -S docker stats torrent --no-stream";

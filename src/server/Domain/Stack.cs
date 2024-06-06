@@ -9,5 +9,5 @@ public class Stack // like directory
     public int order { get; set; }
 
 
-    public List<Service>? services { get; set; }
+    public List<Device>? devices { get; set; }
 }

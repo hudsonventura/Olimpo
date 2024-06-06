@@ -5,5 +5,5 @@ namespace Olimpo.Sensors;
 
 public interface ISensor
 {
-    public Task<List<Channel>> Test(Service service, Sensor sensor);
+    public Task<List<Channel>> Test(Device service, Sensor sensor);
 }

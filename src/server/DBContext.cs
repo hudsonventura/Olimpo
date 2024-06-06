@@ -24,7 +24,7 @@ public class Context : DbContext
 
     public DbSet<Stack> stacks { get; set; }
 
-        public DbSet<Service> services { get; set; }
+        public DbSet<Device> devices { get; set; }
 
             public DbSet<Sensor> sensors { get; set; }
 

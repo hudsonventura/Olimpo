@@ -21,7 +21,7 @@ public class APIController : ControllerBase
     public ActionResult Get()
     {
         var stacks = db.stacks
-            .Include(x => x.services)
+            .Include(x => x.devices)
             .ThenInclude(x => x.sensors)
             .ThenInclude(x => x.channels)
             .ThenInclude(x => x.current_metric)

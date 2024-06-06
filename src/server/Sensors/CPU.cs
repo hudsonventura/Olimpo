@@ -4,7 +4,7 @@ namespace Olimpo.Sensors;
 
 public class CPU : ISensor
 {
-    public async Task<List<Channel>> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         List<Channel> channels = new List<Channel>();
 

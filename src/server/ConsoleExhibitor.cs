@@ -12,7 +12,7 @@ public class ConsoleExhibitor
             while(true){
                 List<Stack> stacks = db.stacks
                     .AsNoTracking()
-                    .Include(x => x.services)
+                    .Include(x => x.devices)
                     .ThenInclude(x => x.sensors)
                     .ThenInclude(x => x.channels)
                     .ThenInclude(x => x.current_metric)
@@ -54,7 +54,7 @@ public class ConsoleExhibitor
         
             
 
-            foreach (var service in stack.services)
+            foreach (var service in stack.devices)
             {
                 
 

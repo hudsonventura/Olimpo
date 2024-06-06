@@ -7,7 +7,7 @@ namespace Olimpo.Sensors;
 public class TCP : ISensor
 {
     
-    public async Task<List<Channel>> Test(Service service, Sensor sensor)
+    public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         Metric metric = null;

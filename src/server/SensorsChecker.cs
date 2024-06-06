@@ -13,14 +13,14 @@ public class SensorsChecker
         using (var db = new Context(appsettings)){
             while(true){
                 List<Stack> stacks = db.stacks
-                    .Include(x => x.services)
+                    .Include(x => x.devices)
                     .ThenInclude(x => x.sensors)
                     .ThenInclude(x => x.channels)
                     .ToList();
 
                 foreach (var stack in stacks)
                 {
-                    foreach (var service in stack.services)
+                    foreach (var service in stack.devices)
                     {
                         foreach (var sensor in service.sensors)
                         {
@@ -53,7 +53,7 @@ public class SensorsChecker
     
     
 
-    public static async void LoopCheck(IConfiguration appsettings, Sensor sensor, Service service)
+    public static async void LoopCheck(IConfiguration appsettings, Sensor sensor, Device service)
     {
         string targetNamespace = "Olimpo.Sensors";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -159,7 +159,7 @@ public class SensorsChecker
 
 
 
-    private static async Task<List<Channel>> GetMetric(Sensor sensor, Service service, object instance, MethodInfo method){
+    private static async Task<List<Channel>> GetMetric(Sensor sensor, Device service, object instance, MethodInfo method){
         var channels = sensor.channels;
         try
         {
