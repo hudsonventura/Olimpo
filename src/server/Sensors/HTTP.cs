@@ -17,7 +17,7 @@ public class HTTP : ISensor
             try
             {
                 string url = $"http://{service.host}:{sensor.port}";
-                if(sensor.host != null){
+                if(sensor.host != string.Empty){
                     url = sensor.host;
                 }
 

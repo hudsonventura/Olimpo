@@ -36,7 +36,7 @@ public class HTTPS : ISensor
             try
             {
                 string url = $"https://{service.host}:{sensor.port}";
-                if(sensor.host != null){
+                if(sensor.host != string.Empty){
                     url = sensor.host;
                 }
 
