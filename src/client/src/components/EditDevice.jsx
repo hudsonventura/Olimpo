@@ -10,7 +10,7 @@ import { AppContext } from './AppContext';
 
 
 
-function EditService({service, setService, showModal, setShowModal}) {
+function EditDevice({device, setDevice, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
 
@@ -19,8 +19,8 @@ function EditService({service, setService, showModal, setShowModal}) {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setService(prevService => ({
-            ...prevService,
+        setDevice(prevDevice => ({
+            ...prevDevice,
             [name]: value
         }));
     };
@@ -48,9 +48,9 @@ function EditService({service, setService, showModal, setShowModal}) {
 
         var url = settings.backend_url;
 
-        //creating service
+        //creating device
         if(data['id'] == undefined){
-            fetch(`${url}/service/`, {
+            fetch(`${url}/device/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,9 +65,9 @@ function EditService({service, setService, showModal, setShowModal}) {
                 console.error('Error:', error);
             });
         }
-        //updating service
+        //updating device
         else{
-            fetch(`${url}/service/${data['id']}`, {
+            fetch(`${url}/device/${data['id']}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,22 +104,22 @@ function EditService({service, setService, showModal, setShowModal}) {
             <Modal.Body>
                 <Form ref={formRef}>
                 <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Service Name</Form.Label>
+                <Form.Label>Device Name</Form.Label>
                 <Form.Control
                     type="text"
                     placeholder="Just an identification"
                     autoFocus
                     name='name'
-                    value={service.name}
+                    value={device.name}
                     onChange={handleInputChange}
                 />
-                <Form.Control type="hidden" name='id' value={service.id} />
+                <Form.Control type="hidden" name='id' value={device.id} />
                 </Form.Group>
             </Form>
             </Modal.Body>
             <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button variant='danger' onClick={() => handleDelete()}>Delete TO IMPLEMENT</Button> {/*//TODO: Implement delete service*/}
+                    <Button variant='danger' onClick={() => handleDelete()}>Delete TO IMPLEMENT</Button> {/*//TODO: Implement delete device*/}
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button variant='outline-dark' onClick={() => setShowModal(false)}>Cancel</Button>
@@ -136,4 +136,4 @@ function Edit(){
     
 }
 
-export default EditService;
+export default EditDevice;

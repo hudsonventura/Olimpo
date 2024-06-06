@@ -22,20 +22,20 @@ export const countChannelsInSensor_Success = (sensor) => {
 
 
 // Funções de contagem de serviço
-export const countChannelsInService = (service) => {
-    return service.sensors.reduce((sensorTotal, sensor) => {
+export const countChannelsInDevice = (device) => {
+    return device.sensors.reduce((sensorTotal, sensor) => {
     return sensorTotal + countChannelsInSensor(sensor);
     }, 1);
 };
 
-export const countChannelsInService_Error = (service) => {
-    return service.sensors.reduce((sensorTotal, sensor) => {
+export const countChannelsInDevice_Error = (device) => {
+    return device.sensors.reduce((sensorTotal, sensor) => {
     return sensorTotal + countChannelsInSensor_Error(sensor);
     }, 0);
 };
 
-export const countChannelsInService_Success = (service) => {
-    return service.sensors.reduce((sensorTotal, sensor) => {
+export const countChannelsInDevice_Success = (device) => {
+    return device.sensors.reduce((sensorTotal, sensor) => {
     return sensorTotal + countChannelsInSensor_Success(sensor);
     }, 0);
 };
@@ -44,20 +44,20 @@ export const countChannelsInService_Success = (service) => {
 
 // Funções de contagem de stack
 export const countChannelsInStack = (stack) => {
-    return stack.services.reduce((serviceTotal, service) => {
-    return serviceTotal + countChannelsInService(service);
+    return stack.devices.reduce((deviceTotal, device) => {
+    return deviceTotal + countChannelsInDevice(device);
     }, 1);
 };
 
 export const countChannelsInStack_Error = (stack) => {
-    return stack.services.reduce((serviceTotal, service) => {
-    return serviceTotal + countChannelsInService_Error(service);
+    return stack.devices.reduce((deviceTotal, device) => {
+    return deviceTotal + countChannelsInDevice_Error(device);
     }, 0);
 };
 
 export const countChannelsInStack_Success = (stack) => {
-    return stack.services.reduce((serviceTotal, service) => {
-    return serviceTotal + countChannelsInService_Success(service);
+    return stack.devices.reduce((deviceTotal, device) => {
+    return deviceTotal + countChannelsInDevice_Success(device);
     }, 0);
 };
 

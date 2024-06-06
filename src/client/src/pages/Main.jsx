@@ -9,15 +9,15 @@ import Badge from 'react-bootstrap/Badge';
 
 import Channel from '../components/Channel';
 import EditStack from '../components/EditStack';
-import EditService from '../components/EditService';
+import EditDevice from '../components/EditDevice';
 
 import Navigation from '../components/Navigation';
 import CalcChannels, {
     countChannelsInStack, 
     countChannelsInStack_Error, 
 
-    countChannelsInService, 
-    countChannelsInService_Error, 
+    countChannelsInDevice, 
+    countChannelsInDevice_Error, 
 
     countChannelsInSensor, 
     countChannelsInSensor_Error, 
@@ -50,11 +50,11 @@ function Main() {
         setShowModalStack(true);
     }
 
-    const [showModalService, setShowModalService] = useState(false);
-    const [editService, setEditService] = useState(0);
-    const handleEditService = (service) => {
-        setEditService(service);
-        setShowModalService(true);
+    const [showModalDevice, setShowModalDevice] = useState(false);
+    const [editDevice, setEditDevice] = useState(0);
+    const handleEditDevice = (device) => {
+        setEditDevice(device);
+        setShowModalDevice(true);
     }
 
     const [showModalSensor, setShowModalSensor] = useState(false);
@@ -104,13 +104,13 @@ function Main() {
         {/* <ToastyGroup success={countChannelsInAllStacks_Success(data)} warning={"Fake"} error={countChannelsInAllStacks_Error(data)}/> */}
         <Container fluid style={{marginTop: '15px'}}>
         <EditStack stack={editStack} setStack={setEditStack} showModal={showModalStack} setShowModal={setShowModalStack} />
-        <EditService service={editService} setStack={setEditService} showModal={showModalService} setShowModal={setShowModalService} />
+        <EditDevice device={editDevice} setStack={setEditDevice} showModal={showModalDevice} setShowModal={setShowModalDevice} />
         
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
                 <th>Stack   <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({name: null, id: null})} /></Tips></th>
-                <th>Service <Tips message="Add new service"><FaPlus onClick={() => handleEditService({name: null, id: null})} /></Tips></th>
+                <th>Device <Tips message="Add new device"><FaPlus onClick={() => handleEditDevice({name: null, id: null})} /></Tips></th>
                 <th>Sensor  <Tips message="Add new sensor"><FaPlus onClick={() => handleEditSensor({name: null, id: null})} /></Tips></th>
                 <th>Channel</th>
                 </tr>
@@ -119,7 +119,7 @@ function Main() {
                 {data.map((stack, index) => (
                     <>
                         {
-                            (stack.services.length == 0)
+                            (stack.devices.length == 0)
                             ?
                             <tr>
                                 <td>
@@ -128,7 +128,7 @@ function Main() {
                                     <FaSortDown /> 
                                     <a> {stack.name} </a>
                                 </td>
-                                <td><FaPlus onClick={() => setShowModalService(true)} /></td>
+                                <td><FaPlus onClick={() => setShowModalDevice(true)} /></td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
@@ -145,18 +145,18 @@ function Main() {
                         }
                         
                         {
-                            stack.services.map((service, index2) => (
+                            stack.devices.map((device, index2) => (
                                 <>
                                     {
-                                        (countChannelsInService(service) > 1)
+                                        (countChannelsInDevice(device) > 1)
                                         ?
                                     <tr>
-                                        <td key={index2} rowSpan={countChannelsInService(service)}>
-                                            <TiEdit onClick={() => handleEditService(service)} /> 
+                                        <td key={index2} rowSpan={countChannelsInDevice(device)}>
+                                            <TiEdit onClick={() => handleEditDevice(device)} /> 
                                             <FaSortUp /> 
                                             <FaSortDown /> 
-                                            {service.name} 
-                                            {(countChannelsInService_Error(service) > 0 ? <Badge bg="danger">{countChannelsInService_Error(service)}</Badge> : <></>)} 
+                                            {device.name} 
+                                            {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                         </td>
                                     </tr>
                                         :
@@ -169,7 +169,7 @@ function Main() {
                                     }
 
                                     {
-                                        service.sensors.map((sensor, index3) => (
+                                        device.sensors.map((sensor, index3) => (
                                             <>
                                                 <tr>
                                                     <td rowSpan_FAKE={countChannelsInSensor(sensor)}>{sensor.name} {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
