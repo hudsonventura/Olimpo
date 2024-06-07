@@ -137,25 +137,38 @@ function Main() {
                         {
                             (stack.devices.length == 0)
                             ?
-                            <tr>
-                                <td>
-                                    <TiEdit onClick={() => handleEditStack(stack)} />
-                                    <FaSortUp /> 
-                                    <FaSortDown /> 
-                                    <a> {stack.name} </a>
+                            <tr key={index} >
+                                <td style={{height: '60px'}}>
+                                    <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                        <FaSortUp />
+                                        <FaSortDown />
+                                    </div>
+                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                        <TiEdit onClick={() => handleEditStack(stack)} />
+                                    </div>
+                                    <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                        <a> {stack.name} </a>
+                                    </div>
                                 </td>
                                 <td><FaPlus onClick={() => handleEditDevice({stack})} /></td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
                             :
-                            <tr>
-                                <td key={index} rowSpan={countChannelsInStack(stack)}>
-                                    <TiEdit onClick={() => handleEditStack(stack)} />
-                                    <FaSortUp /> 
-                                    <FaSortDown /> 
-                                    <a> {stack.name} </a>
-                                    {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} 
+                            <tr key={index} >
+                                <td style={{height: '60px'}} rowSpan={countChannelsInStack(stack)}>
+                                <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                        <FaSortUp />
+                                        <FaSortDown />
+                                    </div>
+                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                        <TiEdit onClick={() => handleEditStack(stack)} />
+                                    </div>
+                                    <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                        <a> {stack.name} </a>
+                                        {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} 
+                                    </div>
+                                    
                                 </td>
                             </tr>
                         }
