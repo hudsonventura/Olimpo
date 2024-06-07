@@ -120,7 +120,7 @@ function Main() {
         <Container fluid style={{marginTop: '15px'}}>
         <EditStack stack={editStack} setStack={setEditStack} showModal={showModalStack} setShowModal={setShowModalStack} />
         <EditDevice stack={editStack} device={editDevice} setDevice={setDevice} showModal={showModalDevice} setShowModal={setShowModalDevice} />
-        <EditSensor device={editDevice} sensor={editSensor} setDevice={setSensor} showModal={showModalSensor} setShowModal={setShowModalSensor} />
+        <EditSensor device={editDevice} sensor={editSensor} setSensor={setSensor} showModal={showModalSensor} setShowModal={setShowModalSensor} />
         
         <Table bordered hover size="sm" responsive="lg">
             <thead>
@@ -193,7 +193,12 @@ function Main() {
                                         device.sensors.map((sensor, index3) => (
                                             <>
                                                 <tr>
-                                                    <td rowSpan_FAKE={countChannelsInSensor(sensor)}>{sensor.name} {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
+                                                    <td rowSpan_FAKE={countChannelsInSensor(sensor)}>
+                                                        <TiEdit onClick={() => handleEditSensor({device, sensor})} /> 
+                                                        <FaSortUp />
+                                                        <FaSortDown />
+                                                        {sensor.name} 
+                                                        {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
                                                     <td colSpan={5}>
                                                         <Row>
                                                             {

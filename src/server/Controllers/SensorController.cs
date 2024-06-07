@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Olimpo;
+using Olimpo.Domain;
 using Olimpo.Sensors;
 
 namespace server.Controllers;
@@ -14,13 +16,16 @@ public class SensorController : ControllerBase
         this.db = db;
     }
 
-    [HttpPost("/sensor/")]
-    public ActionResult Create(Sensor? sensor){
+    [HttpPost("/sensor/{id_device}")]
+    public ActionResult Create(Guid id_device, Sensor? sensor){
         try
         {
-            db.sensors.Add(sensor);
+            Device device = db.devices.Where(x => x.id == id_device)
+                            .Include(x => x.sensors)
+                            .FirstOrDefault();
+            device.sensors.Add(sensor);
             db.SaveChanges();
-            
+
             return Created($"/sensor/{sensor.id}", sensor);
         }
         catch (System.Exception error)
