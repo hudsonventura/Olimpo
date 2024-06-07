@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 
 import Channel from '../components/Channel';
 import EditStack from '../components/EditStack';
@@ -54,6 +56,7 @@ function Main() {
     const [showModalDevice, setShowModalDevice] = useState(false);
     const [editDevice, setDevice] = useState(0);
     const handleEditDevice = ({stack, device}) => {
+        console.log('clicou')
         if(stack != undefined){
             setEditStack(stack);
         }
@@ -125,7 +128,7 @@ function Main() {
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
-                <th>Stack <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({name: null, id: null})} /></Tips></th>
+                <th>Stack <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({stack: {name: null, id: null}})} /></Tips></th>
                 <th>Device</th>
                 <th>Sensor</th>
                 <th>Channel</th>
@@ -150,7 +153,7 @@ function Main() {
                                         <a> {stack.name} </a>
                                     </div>
                                 </td>
-                                <td><FaPlus onClick={() => handleEditDevice({stack})} /></td>
+                                <td><Button variant="primary" onClick={() => handleEditDevice({stack})}><FaPlus />Add new device</Button></td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
@@ -167,7 +170,12 @@ function Main() {
                                     <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
                                         <a> {stack.name} </a>
                                         {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} 
+                                        <div style={{position: 'absolute', bottom: '0', right: '0'}}>
+                                        <Button style={{height: '25px', padding: '0px 6px 6px 0px'}} variant="primary" size="sm" onClick={() => handleEditDevice({stack})}><FaPlus style={{padding: '3px'}} />Device</Button>
+
+                                        </div>
                                     </div>
+                                    
                                 </td>
                             </tr>
                         }
@@ -184,7 +192,7 @@ function Main() {
                                                         <FaSortUp />
                                                         <FaSortDown />
                                                     </div>
-                                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "0%"}}>
                                                         <TiEdit onClick={() => handleEditDevice({device})} /> 
                                                     </div>
                                                     <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
@@ -208,7 +216,7 @@ function Main() {
                                                         {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                                     </div>
                                                 </td>
-                                                <td><FaPlus onClick={() => handleEditSensor({device})} />Implementar adicionar sensor</td>
+                                                <td><Button variant="primary" onClick={() => handleEditSensor({device})}><FaPlus />Add new sensor</Button></td>
                                                 <td>-</td>
                                             </tr>
                                         
@@ -227,19 +235,34 @@ function Main() {
                                                             <TiEdit onClick={() => handleEditSensor({device, sensor})} /> 
                                                         </div>
                                                         <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
-                                                            <a>{sensor.name}</a>
+                                                            <a>
+                                                                {sensor.name} 
+                                                                {
+                                                                    (sensor.port!= undefined)
+                                                                    ?
+                                                                    " / "+sensor.port
+                                                                    :
+                                                                    ""
+                                                                }
+                                                            </a>
                                                             {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)}
                                                         </div>
                                                     </td>
-                                                    <td colSpan={5}>
+                                                    <td>
                                                         <Row style={{}}>
                                                             {
                                                                 sensor.channels.map((channel, index4) => (
                                                                     <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
                                                                 ))
                                                             }
+                                                            <Col> {/* pull to end className="text-end" */}
+                                                                <Button style={{height: '25px', padding: '0px 6px 6px 0px'}} variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
+                                                            </Col>
                                                         </Row>
+                                                        
+                                                        
                                                     </td>
+                                                    
                                                 </tr>
                                             </>
                                         ))
