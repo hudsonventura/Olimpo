@@ -22,6 +22,7 @@ function Channel({id, title, value, unit, type}) {
             <Toast style={{ marginLeft: '12px', marginRight: '-9px', width: '180px', height: '45px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingRight: '50px', position: 'relative' }}
                 onDoubleClick={(e) => handleEditSensor(id)}
                 >
+                    <div className='text-bg-success' style={{borderStyle: "solid", position: "absolute", width: "9px", height: "90%", marginLeft: "-11px", marginTop: "3px",  borderRadius: "6px"}}></div>
                 <a style={{ fontSize: '10px', position: 'relative', zIndex: 1, textAlign: 'left', marginTop: '5px' }}>
                     {title} {/* {(title.length > 30) ? title.substr(0, 35) + ' ...' : title} */}
                 </a>
