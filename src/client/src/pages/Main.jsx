@@ -157,7 +157,7 @@ function Main() {
                             :
                             <tr key={index} >
                                 <td style={{height: '60px'}} rowSpan={countChannelsInStack(stack)}>
-                                <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                    <div style={{position: "absolute", width: "20px", height: "90%"}}>
                                         <FaSortUp />
                                         <FaSortDown />
                                     </div>
@@ -168,7 +168,6 @@ function Main() {
                                         <a> {stack.name} </a>
                                         {(countChannelsInStack_Error(stack) > 0 ? <Badge bg="danger">{countChannelsInStack_Error(stack)}</Badge> : <></>)} 
                                     </div>
-                                    
                                 </td>
                             </tr>
                         }
@@ -181,20 +180,33 @@ function Main() {
                                         ?
                                             <tr>
                                                 <td key={index2} rowSpan={countChannelsInDevice(device)}>
-                                                    <TiEdit onClick={() => handleEditDevice({device})} /> 
-                                                    <FaSortUp />
-                                                    <FaSortDown /> 
-                                                    {device.name} 
-                                                    {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
+                                                    <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                                        <FaSortUp />
+                                                        <FaSortDown />
+                                                    </div>
+                                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                                        <TiEdit onClick={() => handleEditDevice({device})} /> 
+                                                    </div>
+                                                    <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                                        <a> {device.name}  </a>
+                                                        {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
+                                                    </div>
                                                 </td>
                                             </tr>
                                         :
                                             <tr>
                                                 <td>
-                                                    <TiEdit onClick={() => handleEditDevice({device})} /> 
-                                                    <FaSortUp />
-                                                    <FaSortDown />
-                                                    {device.name}
+                                                    <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                                        <FaSortUp />
+                                                        <FaSortDown />
+                                                    </div>
+                                                    <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                                        <TiEdit onClick={() => handleEditDevice({device})} /> 
+                                                    </div>
+                                                    <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                                        <a> {device.name}  </a>
+                                                        {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
+                                                    </div>
                                                 </td>
                                                 <td><FaPlus onClick={() => handleEditSensor({device})} />Implementar adicionar sensor</td>
                                                 <td>-</td>
@@ -207,13 +219,20 @@ function Main() {
                                             <>
                                                 <tr>
                                                     <td rowSpan_FAKE={countChannelsInSensor(sensor)}>
-                                                        <TiEdit onClick={() => handleEditSensor({device, sensor})} /> 
-                                                        <FaSortUp />
-                                                        <FaSortDown />
-                                                        {sensor.name} 
-                                                        {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} </td>
+                                                        <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                                            <FaSortUp />
+                                                            <FaSortDown />
+                                                        </div>
+                                                        <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                                            <TiEdit onClick={() => handleEditSensor({device, sensor})} /> 
+                                                        </div>
+                                                        <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                                            <a>{sensor.name}</a>
+                                                            {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)}
+                                                        </div>
+                                                    </td>
                                                     <td colSpan={5}>
-                                                        <Row>
+                                                        <Row style={{}}>
                                                             {
                                                                 sensor.channels.map((channel, index4) => (
                                                                     <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
