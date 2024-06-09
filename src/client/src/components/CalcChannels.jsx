@@ -24,7 +24,7 @@ export const countChannelsInSensor_Success = (sensor) => {
 // Funções de contagem de serviço
 export const countChannelsInDevice = (device) => {
     return device.sensors.reduce((sensorTotal, sensor) => {
-    return sensorTotal + countChannelsInSensor(sensor);
+    return 1 + countChannelsInSensor(sensor);
     }, 1);
 };
 

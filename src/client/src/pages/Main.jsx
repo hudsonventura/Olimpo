@@ -20,10 +20,7 @@ import CalcChannels, {
     countChannelsInStack_Error, 
 
     countChannelsInDevice, 
-    countChannelsInDevice_Error, 
-
-    countChannelsInSensor, 
-    countChannelsInSensor_Error, 
+    countChannelsInDevice_Error
     } from '../components/CalcChannels';
 
 import GetMainData from '../components/GetMainData';
@@ -128,10 +125,9 @@ function Main() {
         <Table bordered hover size="sm" responsive="lg">
             <thead>
                 <tr>
-                <th>Stack <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({stack: {name: null, id: null}})} /></Tips></th>
-                <th>Device</th>
-                <th>Sensor</th>
-                <th>Channel</th>
+                    <th>Stack <Tips message="Add new stack"><FaPlus onClick={() => handleEditStack({stack: {name: null, id: null}})} /></Tips></th>
+                    <th>Device</th>
+                    <th>Sensors / Channels</th>
                 </tr>
             </thead>
             <tbody>
@@ -154,7 +150,6 @@ function Main() {
                                     </div>
                                 </td>
                                 <td><Button variant="primary" onClick={() => handleEditDevice({stack})}><FaPlus />Add new device</Button></td>
-                                <td>-</td>
                                 <td>-</td>
                             </tr>
                             :
@@ -217,76 +212,44 @@ function Main() {
                                                     </div>
                                                 </td>
                                                 <td><Button variant="primary" onClick={() => handleEditSensor({device})}><FaPlus />Add new sensor</Button></td>
-                                                <td>-</td>
                                             </tr>
                                         
                                     }
-
-                                    {
-                                        device.sensors.map((sensor, index3) => (
-                                            <>
+                                    
+                                        
+                                        {
+                                            (device.sensors.length > 0)
+                                            ?
                                                 <tr>
-                                                    <td rowSpan_FAKE={countChannelsInSensor(sensor)}>
-                                                        <div style={{position: "absolute", width: "20px", height: "90%"}}>
-                                                            <FaSortUp />
-                                                            <FaSortDown />
-                                                        </div>
-                                                        <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
-                                                            <TiEdit onClick={() => handleEditSensor({device, sensor})} /> 
-                                                        </div>
-                                                        <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
-                                                            <a>
-                                                                {sensor.name} 
-                                                                {
-                                                                    (sensor.port!= undefined)
-                                                                    ?
-                                                                    " / "+sensor.port
-                                                                    :
-                                                                    ""
-                                                                }
-                                                            </a>
-                                                            {/* {(countChannelsInSensor_Error(sensor) > 0 ? <Badge bg="danger">{countChannelsInSensor_Error(sensor)}</Badge> : <></>)} */}
-                                                        </div>
-                                                    </td>
                                                     <td>
-                                                        <Container fluid='md'>
-                                                            {sensor.name}
-                                                            <Row style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", padding: "3px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
-                                                                {
-                                                                    sensor.channels.map((channel, index4) => (
-                                                                        <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
-                                                                    ))
-                                                                }
-                                                                {
-                                                                    sensor.channels.map((channel, index4) => (
-                                                                        <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
-                                                                    ))
-                                                                }
-                                                                <Col> {/* pull to end className="text-end" */}
-                                                                    <Button style={{height: '25px', padding: '0px 6px 6px 0px'}} variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
-                                                                </Col>
-                                                            </Row>
-                                                            {sensor.name}
-                                                            <Row style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", padding: "3px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
-                                                                {
-                                                                    sensor.channels.map((channel, index4) => (
-                                                                        
-                                                                        <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
-                                                                        
-                                                                    ))
-                                                                }
-                                                                <Col> {/* pull to end className="text-end" */}
-                                                                    <Button style={{height: '25px', padding: '0px 6px 6px 0px'}} variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
-                                                                </Col>
-                                                            </Row>
-                                                        </Container>
-                                                        
+                                                        {
+                                                            device.sensors.map((sensor, index3) => (
+                                                                <>
+                                                                            <Row style={{marginLeft: '12px'}}>
+                                                                                        <Row>{sensor.name}</Row>
+                                                                                        <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
+                                                                                            padding: "3px", 
+                                                                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                                                                                            }} >
+                                                                                            {
+                                                                                                sensor.channels.map((channel, index4) => (
+                                                                                                    <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
+                                                                                                ))
+                                                                                            }
+                                                                                        </Row>
+                                                                            </Row>    
+                                                                </>
+                                                            ))
+                                                        }
+                                                        <Button style={{height: '25px', width: "55px", padding: '0px 6px 6px 0px', marginLeft: "15px", position: "absolute", right: 24, marginTop: -36, zIndex: 100}} 
+                                                            variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
                                                     </td>
-                                                    
                                                 </tr>
-                                            </>
-                                        ))
-                                    }
+                                            :
+                                            <></>
+                                        }
+
+                                
                                 </>
                             ))
                         }
