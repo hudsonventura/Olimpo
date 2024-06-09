@@ -274,7 +274,7 @@ function Main() {
                                                             (readOnlyMode == false)
                                                             ?
                                                             <Button style={{height: '25px', width: "55px", padding: '0px 6px 6px 0px', marginLeft: "15px", position: "absolute", right: 24, marginTop: -3, zIndex: 100}} 
-                                                            variant="primary" size="sm" onClick={() => handleEditSensor({device})}>
+                                                                variant="primary" size="sm" onClick={() => handleEditSensor({device})}>
                                                                 <FaPlus style={{padding: '3px'}} /> Add
                                                             </Button>
                                                             :
@@ -292,7 +292,7 @@ function Main() {
                                                                             }} >
                                                                             {
                                                                                 sensor.channels.map((channel, index4) => (
-                                                                                    <Channel id={channel.id} value={channel.current_metric.value} title={channel.name} type="success" unit={channel.unit}></Channel>
+                                                                                    <Channel channel={channel}></Channel>
                                                                                 ))
                                                                             }
                                                                         </Row>
