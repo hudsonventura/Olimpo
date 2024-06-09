@@ -222,6 +222,8 @@ function Main() {
                                             ?
                                                 <tr>
                                                     <td>
+                                                        <Button style={{height: '25px', width: "55px", padding: '0px 6px 6px 0px', marginLeft: "15px", position: "absolute", right: 24, marginTop: -3, zIndex: 100}} 
+                                                            variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
                                                         {
                                                             device.sensors.map((sensor, index3) => (
                                                                 <>
@@ -241,8 +243,6 @@ function Main() {
                                                                 </>
                                                             ))
                                                         }
-                                                        <Button style={{height: '25px', width: "55px", padding: '0px 6px 6px 0px', marginLeft: "15px", position: "absolute", right: 24, marginTop: -36, zIndex: 100}} 
-                                                            variant="primary" size="sm" onClick={() => handleEditSensor({device})}><FaPlus style={{padding: '3px'}} />Add</Button>
                                                     </td>
                                                 </tr>
                                             :
