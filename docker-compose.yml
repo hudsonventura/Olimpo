@@ -1,0 +1,25 @@
+version: '3.3'
+services:
+
+  postgres:
+    container_name: olimpo_postgres
+    image: "postgres:16"
+    restart: always
+    environment:
+      - POSTGRES_USER=olimpo
+      - POSTGRES_PASSWORD=#MyS3cr3tP@ssw0rd
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - /data/postgres/:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    mem_limit: 512m
+    networks:
+      - olimpo
+
+
+
+
+networks:
+  olimpo:
+    driver: bridge

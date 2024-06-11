@@ -5,16 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": ".NET Core Launch (API)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/Olimpo/bin/Debug/net6.0/Olimpo.dll",
+            "program": "${workspaceFolder}/src/server/bin/Debug/net6.0/server.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Olimpo/",
+            "cwd": "${workspaceFolder}/src/server/",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger/index.html"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
         }
-
     ]
 }
