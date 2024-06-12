@@ -1,5 +1,5 @@
 # Olimpo - Network Monitoring
-At the top you see everything <small>(Everything means hardware and software only)</small>
+At the top, you see everything <small>(Everything means hardware and software only)</small>
 ![alt text](image.png)  
 <br>
 
