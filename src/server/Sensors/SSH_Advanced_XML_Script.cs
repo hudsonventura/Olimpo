@@ -6,12 +6,11 @@ using System.Xml.Linq;
 using System.Dynamic;
 using System.Collections;
 using Newtonsoft.Json;
-using server.Domain;
 using Newtonsoft.Json.Linq;
 
 namespace Olimpo.Sensors;
 
-public class SSHAdvancedScript : ISensor
+public class SSH_Advanced_XML_Script : ISensor
 {
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {

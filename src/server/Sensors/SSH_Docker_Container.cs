@@ -4,7 +4,7 @@ using Renci.SshNet;
 
 namespace Olimpo.Sensors;
 
-public class SSH_DOCKER_CONTAINER : ISensor
+public class SSH_Docker_Container : ISensor
 {
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
