@@ -211,13 +211,13 @@ function Main() {
                                                             <TiEdit onClick={() => handleEditDevice({device})} /> 
                                                         </div>
                                                         <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
-                                                            <a> {device.name}  </a>
+                                                            <a> {device.name} - <small class="text-body-secondary">{device.host}</small> </a>
                                                             {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                                         </div>
                                                     </>
                                                     :
                                                     <>
-                                                        <a> {device.name}  </a>
+                                                        <a> {device.name} - <small class="text-body-secondary">{device.host}</small> </a>
                                                         {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                                     </>
                                                 }
@@ -238,14 +238,14 @@ function Main() {
                                                                     <TiEdit onClick={() => handleEditDevice({device})} /> 
                                                                 </div>
                                                                 <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
-                                                                    <a> {device.name}  </a>
+                                                                    <a> {device.name} - <small class="text-body-secondary">{device.host}</small> </a>
                                                                     {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                                                 </div>
                                                             </>
                                                         :
                                                         <>
-                                                            <a> {device.name}  </a>
-                                                                    {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
+                                                            <a> {device.name} - <small class="text-body-secondary">{device.host}</small> </a>
+                                                            {(countChannelsInDevice_Error(device) > 0 ? <Badge bg="danger">{countChannelsInDevice_Error(device)}</Badge> : <></>)} 
                                                         </>
                                                     }
                                                     
