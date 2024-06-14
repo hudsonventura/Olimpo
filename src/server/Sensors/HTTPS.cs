@@ -42,22 +42,23 @@ public class HTTPS : ISensor
 
                 HttpResponseMessage response = await client.GetAsync(url);
 
-                int error_code = 0;
+                Metric.Status status = Metric.Status.Success;
                 if(!response.IsSuccessStatusCode){
-                    error_code = 1;
+                    status = Metric.Status.Error;
                 }
                 result = new Metric(){
                     message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
                     latency = stopwatch.ElapsedMilliseconds,
-                    error_code = error_code
+                    status = status
                 };
                 
                 //get the response 200, 300, 400, 500, etc
                 result = new Metric(){
                     message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
-                    latency = stopwatch.ElapsedMilliseconds
+                    latency = stopwatch.ElapsedMilliseconds,
+                    status = status
                 };
             }
             catch (Exception error)
@@ -71,7 +72,7 @@ public class HTTPS : ISensor
                 result = new Metric(){
                     message = msg,
                     latency = stopwatch.ElapsedMilliseconds,
-                    error_code = -1
+                    status = Metric.Status.Error
                 };
             }finally{
                 stopwatch.Stop();

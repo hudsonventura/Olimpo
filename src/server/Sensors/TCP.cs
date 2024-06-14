@@ -25,7 +25,7 @@ public class TCP : ISensor
                     metric = new Metric() { 
                         message = $"The port {sensor.port} is not opened or a timeout was got",
                         latency = stopwatch.ElapsedMilliseconds,
-                        error_code = 1
+                        status = Metric.Status.Error
                     };
                 }
 
@@ -43,7 +43,7 @@ public class TCP : ISensor
                     metric = new Metric() { 
                         message = $"The port {sensor.port} is not opened or a timeout was got",
                         latency = stopwatch.ElapsedMilliseconds,
-                        error_code = 1
+                        status = Metric.Status.Error
                     };
                 }
             }
@@ -53,7 +53,7 @@ public class TCP : ISensor
             metric = new Metric(){ 
                 message = error.Message,
                 latency = stopwatch.ElapsedMilliseconds,
-                error_code = 1
+                status = Metric.Status.Error
             };
         }
         finally{

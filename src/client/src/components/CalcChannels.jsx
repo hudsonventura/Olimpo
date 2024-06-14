@@ -13,11 +13,11 @@ export const countChannelsInSensor = (sensor) => {
     return 1;
 };
 export const countChannelsInSensor_Error = (sensor) => {
-    return sensor.channels.filter(channel => channel.current_metric?.error_code > 0).length;
+    return sensor.channels.filter(channel => channel.current_metric?.status == 'Error').length;
 };
 
 export const countChannelsInSensor_Success = (sensor) => {
-    return sensor.channels.filter(channel => channel.current_metric?.error_code == 0).length;
+    return sensor.channels.filter(channel => channel.current_metric?.status == 'Success').length;
 };
 
 

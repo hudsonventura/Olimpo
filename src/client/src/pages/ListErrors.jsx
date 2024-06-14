@@ -66,7 +66,7 @@ function ListErrors() {
                                                     sensor.channels.map((channel, index4) => (
                                                         <>
                                                             {
-                                                                (channel.current_metric.error_code > 0)
+                                                                (channel.current_metric.status == 'Success')
                                                                 ?
                                                                 <>
                                                                     <tr key={index4}>
@@ -77,10 +77,10 @@ function ListErrors() {
                                                                     <td>{sensor.type}{(sensor.port == null) ? "" :  " / "+sensor.port}</td>
                                                                     <td>{channel.current_metric.latency} ms</td>
                                                                     <td>
-                                                                        <Button size="sm" style={{width: "100px"}} variant={(channel.current_metric.error_code > 0) ? "danger" : "success"}>
+                                                                        <Button size="sm" style={{width: "100px"}} variant={(channel.current_metric.status == 'Error') ? "danger" : "success"}>
                                                                             {channel.current_metric.value} {channel.unit}</Button>
                                                                         </td>
-                                                                        <td style={(channel.current_metric.error_code > 0) ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>
+                                                                        <td style={(channel.current_metric.status == 'Error') ? {color: "red", fontWeight: "bold", textWrap: "nowrap"} : {color: "green"}}>
                                                                             <OverlayTrigger placement="left" delay={{ show: 100, hide: 400 }} overlay={<Tooltip id="button-tooltip-2">{channel.current_metric.message}</Tooltip>}>
                                                                                 <text>{(channel.current_metric.message.length > 50) ? channel.current_metric.message.substr(0, 50) + ' ...': channel.current_metric.message}</text>
                                                                             </OverlayTrigger>

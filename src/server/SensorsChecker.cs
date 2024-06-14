@@ -75,7 +75,7 @@ public class SensorsChecker
                 id = Guid.NewGuid(),
                 value = -1,
                 datetime = DateTime.Now,
-                error_code = 3,
+                status = Metric.Status.Error,
                 message = $"The type {sensor.type.ToString()} was not implemented yet"
             };
             Channel channel_fake = new Channel(){
@@ -99,7 +99,7 @@ public class SensorsChecker
                     id = Guid.NewGuid(),
                     value = -1,
                     datetime = DateTime.Now,
-                    error_code = 3,
+                    status = Metric.Status.Error,
                     message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
                 }
             };
@@ -182,7 +182,7 @@ public class SensorsChecker
             channels.ForEach(x => {
                 x.current_metric = new Metric(){
                     message = error.Message,
-                    error_code = 5,
+                    status = Metric.Status.Error,
                     datetime = DateTime.Now,
                 };
             });
@@ -196,7 +196,7 @@ public class SensorsChecker
             channels.ForEach(x => {
                 x.current_metric = new Metric(){
                     message = error.Message,
-                    error_code = 5,
+                    status = Metric.Status.Error,
                     datetime = DateTime.Now,
                 };
             });

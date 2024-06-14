@@ -138,7 +138,7 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
                             <option value="ping">Ping</option>
                             <option value="SSH_Docker_Container">SSH_Docker_Container</option>
                             <option value="SSH_Memory">SSH_Memory</option>
-                            <option value="ssh_advanced_script">SSh Advanced Script (PRTG compatible)</option>
+                            <option value="SSHAdvancedScript">SSH Advanced Script (PRTG compatible)</option>
                         </Form.Select>
                     </FloatingLabel>
                     </Col>

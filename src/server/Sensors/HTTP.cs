@@ -1,4 +1,5 @@
 using Olimpo.Domain;
+using Spectre.Console;
 
 namespace Olimpo.Sensors;
 
@@ -24,15 +25,15 @@ public class HTTP : ISensor
                 HttpResponseMessage response = response = await client.GetAsync(url);
                 
 
-                int error_code = 0;
+                Metric.Status status = Metric.Status.Success;
                 if(!response.IsSuccessStatusCode){
-                    error_code = 1;
+                    status = Metric.Status.Error;
                 }
                 result = new Metric(){
                     message = $"Status code: {response.StatusCode.ToString()}",
                     value = (long)response.StatusCode,
                     latency = stopwatch.ElapsedMilliseconds,
-                    error_code = error_code
+                    status = status
                 };
             }
             catch (Exception error)
@@ -40,7 +41,7 @@ public class HTTP : ISensor
                 result = new Metric(){
                     message = error.Message,
                     latency = stopwatch.ElapsedMilliseconds,
-                    error_code = 1
+                    status = Metric.Status.Error
                 };
             }finally{
                 stopwatch.Stop();

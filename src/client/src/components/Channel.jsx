@@ -7,7 +7,7 @@ import EditSensor from './EditStack';
 import Tips from '../components/Tips';
 
 import { FaCheck } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoIosPause } from "react-icons/io";
 import { BsExclamation } from "react-icons/bs";
 
 
@@ -22,14 +22,23 @@ function Channel({channel}) {
         setShowModalSensor(true);
     }
 
-    let type = (channel.current_metric.error_code > 0) ? 'danger' : 'success';
+    let type = 'danger'; 
+    switch (channel.current_metric.status) {
+        case 'Success':
+            type = 'success';
+            break;
+    
+        default: type = 'danger';
+            break;
+    }
+
 
     return (
         <>
             <Toast style={{ marginLeft: '12px', marginRight: '-9px', width: '180px', height: '45px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingRight: '50px', position: 'relative' }}
                 onDoubleClick={(e) => handleEditSensor()}
                 >
-                    <div className={"text-bg-"+type} style={{borderStyle: "none", position: "absolute", width: "15px", height: "100%", marginLeft: "-12px", marginTop: 0,  borderRadius: "3px"}}>
+                    <div className={"text-bg-"+type} style={{borderStyle: "none", position: "absolute", width: "14px", height: "104%", marginLeft: "-13px", marginTop: '-1px',  borderRadius: "3px", borderTopRightRadius: 0, borderEndEndRadius: 0}}>
                         {
                             (type == 'danger')
                             ?
@@ -51,8 +60,15 @@ function Channel({channel}) {
                             :
                                 <></>
                         }
+                        {
+                            (type == 'paused')
+                            ?
+                                <IoIosPause style={{height: '12px'}} />
+                            :
+                                <></>
+                        }
                     </div>
-                    <Tips message={(channel.current_metric.error_code > 0) ? channel.current_metric.message : 'Success'}>
+                    <Tips message={(channel.current_metric.status == 'Error') ? channel.current_metric.message : channel.current_metric.status}>
                         <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '5px', marginLeft: '9px' }}>
                             {channel.name} {channel.error} {/* {(title.length > 30) ? title.substr(0, 35) + ' ...' : title} */}
                         </a>

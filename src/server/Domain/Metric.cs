@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace Olimpo.Domain;
 
 public class Metric
@@ -11,7 +14,16 @@ public class Metric
     public decimal value { get; set; } = -1; //-1 is default value informing that it was not changed
     public string message { get; set; } = "Message was not set yet";
 
-    public int error_code { get; set; } = 0; //0 inform no error
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Status status { get; set; } = Status.Success;
 
     
+
+    public enum Status{
+        Success = 1,
+        Warning = 2,
+        Paused = 3,
+        Error = -1
+
+    }
 }
