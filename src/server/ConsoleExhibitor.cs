@@ -90,7 +90,7 @@ public class ConsoleExhibitor
                         
                         if(metric == null){
                             metric = new Metric(){
-                                datetime = DateTime.Now
+                                datetime = DateTime.UtcNow
                             };
                         }
 
@@ -114,8 +114,10 @@ public class ConsoleExhibitor
                                 default: break;
                             }
                         }
-                        
-                        var value = (metric.value == -1) ? "-" : metric.value.ToString("0.##");
+                        var valuestring = metric.value?.ToString("0.##") ?? string.Empty;
+                        var value = (metric.value == -1) ? "-" : valuestring;
+
+
                     
                         // Add content row 
                         grid.AddRow(new Text[]{

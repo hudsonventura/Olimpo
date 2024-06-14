@@ -11,7 +11,7 @@ public class Metric
 
 
     public long latency { get; set; } = -1; // how many time it spends to obtain the metric value. It's cool for ping, tcp, query on db, etc.
-    public decimal value { get; set; } = -1; //-1 is default value informing that it was not changed
+    public decimal? value { get; set; } = null; //-1 is default value informing that it was not changed
     public string message { get; set; } = "Message was not set yet";
 
     [JsonConverter(typeof(StringEnumConverter))]

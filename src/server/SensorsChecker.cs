@@ -57,11 +57,15 @@ public class SensorsChecker
     {
         string targetNamespace = "Olimpo.Sensors";
         string targetAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-        string nomeCompletoDaClasse = $"{targetNamespace}.{sensor.type.ToUpper()}";
+        string nomeCompletoDaClasse = $"{targetNamespace}.{sensor.type}";
         Assembly assembly = Assembly.Load(targetAssemblyName);
 
 
-        var  fullClassName  = assembly.GetType(nomeCompletoDaClasse);
+        var  fullClassName  = assembly.GetTypes().FirstOrDefault(t => t.FullName.Equals(nomeCompletoDaClasse, StringComparison.OrdinalIgnoreCase));
+        if(fullClassName == null){
+            Console.WriteLine($"The sensor {nomeCompletoDaClasse} not exists");
+            return;
+        }
         Type type = fullClassName;
         object instance;
 
@@ -71,17 +75,13 @@ public class SensorsChecker
         }
         catch (System.Exception error)
         {
-            Metric metric_fake = new Metric(){
-                id = Guid.NewGuid(),
-                value = -1,
-                datetime = DateTime.Now,
-                status = Metric.Status.Error,
-                message = $"The type {sensor.type.ToString()} was not implemented yet"
-            };
             Channel channel_fake = new Channel(){
                 name = "Not checked",
-                current_metric = metric_fake
-            };
+                current_metric = new Metric(){
+                    id = Guid.NewGuid(),
+                    status = Metric.Status.Error,
+                    message = $"The type {sensor.type.ToString()} was not implemented yet"
+                }};
             sensor.channels.Add(channel_fake);
             return;
         }
@@ -97,8 +97,6 @@ public class SensorsChecker
                 name = "Not checked",
                 current_metric = new Metric(){
                     id = Guid.NewGuid(),
-                    value = -1,
-                    datetime = DateTime.Now,
                     status = Metric.Status.Error,
                     message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
                 }
@@ -183,7 +181,7 @@ public class SensorsChecker
                 x.current_metric = new Metric(){
                     message = error.Message,
                     status = Metric.Status.Error,
-                    datetime = DateTime.Now,
+                    datetime = DateTime.UtcNow,
                 };
             });
             return channels;
@@ -197,7 +195,7 @@ public class SensorsChecker
                 x.current_metric = new Metric(){
                     message = error.Message,
                     status = Metric.Status.Error,
-                    datetime = DateTime.Now,
+                    datetime = DateTime.UtcNow,
                 };
             });
             return channels;

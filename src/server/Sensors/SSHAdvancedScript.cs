@@ -1,6 +1,13 @@
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Olimpo.Domain;
 using Renci.SshNet;
+using System.Xml.Linq;
+using System.Dynamic;
+using System.Collections;
+using Newtonsoft.Json;
+using server.Domain;
+using Newtonsoft.Json.Linq;
 
 namespace Olimpo.Sensors;
 
@@ -8,78 +15,111 @@ public class SSHAdvancedScript : ISensor
 {
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
-        
         List<Channel> channels = new List<Channel>();
-        List<(int, string, string)> commands = new List<(int, string, string)>();
-        commands.Add((1, "SMART", "/var/prtg/scriptsxml/disk.sh sd"));
+        string command = $"sudo -S /var/prtg/scriptsxml/disk.sh /mnt/Onedrive";
 
+        var connectionInfo = new Renci.SshNet.ConnectionInfo(service.host, sensor.username,
+                new PasswordAuthenticationMethod(sensor.username, sensor.password));
 
-
-        using (var client = new SshClient(service.host, sensor.username, sensor.password))
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        using (var client = new SshClient(connectionInfo))
         {
             try
             {
-                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
+            
                 client.Connect();
 
-                foreach (var command in commands){
-                    if (client.IsConnected)
-                    {
+                if (client.IsConnected)
+                {
+                    ShellStream stream = client.CreateShellStream("xterm", 80, 24, 800, 600, 1024);
+                     // Get logged in and get user prompt
+                    string prompt = stream.Expect(new Regex(@"[$>]"));
+                    //Console.WriteLine(prompt);
 
-                        var commandResult = client.RunCommand(command.Item3);
-                        string numberWithoutComma = commandResult.Result.Replace(".", ",");
+                    // Send command and expect password or user prompt
+                    stream.WriteLine(command);
+                    prompt = stream.Expect(new Regex(@"([$#>:])"));
+                    //Console.WriteLine(prompt);
+
+                    // Check to send password
+                    if (prompt.Contains(":"))
+                    {
+                            // Send password
+                        stream.WriteLine(sensor.password);
+                        prompt = stream.Expect(new Regex(@"[$#>]"));
+                        //Console.WriteLine(prompt);
+                    }
+
+                    var lines = prompt.Trim().Split("\r\n");
+                    var xml = string.Join("", lines);
+                    var last_tag = xml.Substring(xml.Length - 7);
+                    xml = (last_tag != "</prtg>") ? $"{xml}</prtg>" : xml;
+                    
+                    XDocument xmlDoc = XDocument.Parse(xml);
+                    string json = JsonConvert.SerializeXNode(xmlDoc);
+                    var jsonObject = JObject.Parse(json);
+                    JArray results = (JArray)jsonObject["prtg"]["result"];
+                    
+                    int channelId = 0;
+                    foreach (var item in results) {
+                        channelId++;
+                        dynamic result = item.ToString();
+
+                        var channel = GetDynamicPropertyValue(item, "channel");
+                        var value = GetDynamicPropertyValue(item, "value");
+                        var unit = GetDynamicPropertyValue(item, "CustomUnit");
+                        unit = (unit != null) ? unit : GetDynamicPropertyValue(item, "Unit");
+                        var LimitMinWarning = GetDynamicPropertyValue(item, "LimitMinWarning");
+                        var LimitMinError = GetDynamicPropertyValue(item, "LimitMinError");
+                        var LimitMode = GetDynamicPropertyValue(item, "LimitMode");
 
                         channels.Add(new Channel(){
-                                channel_id = command.Item1,
-                                name = $"{sensor.name} - {command.Item2}",
-                                unit = "GB",
+                                channel_id = channelId,
+                                name = channel,
+                                unit = unit,
                                 current_metric = new Metric(){
-                                latency = stopwatch.ElapsedMilliseconds,
-                                message = "Success",
-                                value = decimal.Parse(numberWithoutComma)
-                            }
+                                    latency = stopwatch.ElapsedMilliseconds,
+                                    message = "Success",
+                                    value = decimal.Parse(value),
+                                    status = Metric.Status.Success,
+                                }
                         });
 
-                        
                     }
-                    else
-                    {
-                        channels.Add(new Channel(){
-                                channel_id = command.Item1,
-                                name = $"{sensor.name} - {command.Item2}",
-                                unit = "",
-                                current_metric = new Metric(){
-                                latency = stopwatch.ElapsedMilliseconds,
-                                message = "SSH not connected",
-                                value = -1
-                            }
-                        });
-                    }
+                }
+                else
+                {
+                    Console.WriteLine("Não foi possível conectar ao servidor SSH.");
                 }
             }
             catch (Exception ex)
             {
-                foreach (var command in commands){
-                    channels.Add(new Channel(){
-                            channel_id = command.Item1,
-                            name = $"{sensor.name} - {command.Item2}",
-                            unit = "",
-                            current_metric = new Metric(){
-                            latency = -1,
-                            message = $"Fail on SSH connect: {ex.Message}",
-                            value = -1
-                        }
-                    });
-                }
+                throw;
             }
             finally
             {
                 client.Disconnect();
             }
         }
-        throw new NotImplementedException();
+
+
         return channels;
     }
 
+
+
+
+    static string GetDynamicPropertyValue(dynamic obj, string propertyName)
+    {
+        try
+        {
+            // Tentar obter o valor da propriedade
+            return obj[propertyName]?.ToString();
+        }
+        catch (Exception)
+        {
+            // Retornar null se a propriedade não existir
+            return null;
+        }
+    }
 }
