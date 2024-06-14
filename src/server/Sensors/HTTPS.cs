@@ -52,14 +52,7 @@ public class HTTPS : ISensor
                     latency = stopwatch.ElapsedMilliseconds,
                     status = status
                 };
-                
-                //get the response 200, 300, 400, 500, etc
-                result = new Metric(){
-                    message = $"Status code: {response.StatusCode.ToString()}",
-                    value = (long)response.StatusCode,
-                    latency = stopwatch.ElapsedMilliseconds,
-                    status = status
-                };
+
             }
             catch (Exception error)
             {
@@ -89,9 +82,10 @@ public class HTTPS : ISensor
                 channel_id = 2,
                 unit = " days",
                 current_metric = new Metric(){
-                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error",
+                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error", //Just one day. Change to alerts value
                     value = (expirationDate - DateTime.UtcNow).Days,
-                    latency = stopwatch.ElapsedMilliseconds
+                    latency = stopwatch.ElapsedMilliseconds,
+                    status = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? Metric.Status.Success : Metric.Status.Error //Just one day. Change to alerts value
                 }
             });
             return channels;

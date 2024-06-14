@@ -35,7 +35,8 @@ public class TCP : ISensor
                     metric = new Metric() { 
                         message = "Success", 
                         latency = stopwatch.ElapsedMilliseconds, 
-                        value = stopwatch.ElapsedMilliseconds 
+                        value = stopwatch.ElapsedMilliseconds,
+                        status = Metric.Status.Success
                     };
                 }
                 else

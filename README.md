@@ -18,6 +18,7 @@ Just `docker compose up`, after see `http://localhost:3000`. Easy peasy lemon sq
 
 # TODO
  - Implement sensor compatible with PRTG Advanced Script;
+ - Implement edit sensor;
  - Implement docker-compose.yml;
  - Implement a screen to edit the name of the channel;
  - Implement a screen to edit the limits of the channel;

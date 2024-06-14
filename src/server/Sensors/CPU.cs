@@ -15,10 +15,11 @@ public class CPU : ISensor
                 name = $"{sensor.name} - % usage CPU",
                 unit = "%",
                 current_metric = new Metric(){
-                latency  = 0,
-                value = rand.Next(0, 100),
-                message = "Success"
-            }
+                    latency  = 0,
+                    value = rand.Next(0, 100),
+                    message = "Success",
+                    status = Metric.Status.Success
+                }
         });
 
         channels.Add(new Channel(){
@@ -26,10 +27,11 @@ public class CPU : ISensor
                 name = $"{sensor.name} - Temp",
                 unit = "ºC",
                 current_metric = new Metric(){
-                latency  = 0,
-                value = 39,
-                message = "Success"
-            }
+                    latency  = 0,
+                    value = 39,
+                    message = "Success",
+                    status = Metric.Status.Success
+                }
         });
 
         return channels;

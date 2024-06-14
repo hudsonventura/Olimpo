@@ -6,7 +6,7 @@ import { useState } from 'react';
 import EditSensor from './EditStack';
 import Tips from '../components/Tips';
 
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaRegClock  } from "react-icons/fa";
 import { IoMdClose, IoIosPause } from "react-icons/io";
 import { BsExclamation } from "react-icons/bs";
 
@@ -27,7 +27,23 @@ function Channel({channel}) {
         case 'Success':
             type = 'success';
             break;
-    
+
+        case 'Warning':
+            type = 'warning';
+            break;
+        
+        case 'Paused':
+            type = 'primary';
+            break;
+
+        case 'Error':
+            type = 'danger';
+            break;
+
+        case 'NotChecked':
+            type = 'secondary';
+            break;
+
         default: type = 'danger';
             break;
     }
@@ -40,30 +56,37 @@ function Channel({channel}) {
                 >
                     <div className={"text-bg-"+type} style={{borderStyle: "none", position: "absolute", width: "14px", height: "104%", marginLeft: "-13px", marginTop: '-1px',  borderRadius: "3px", borderTopRightRadius: 0, borderEndEndRadius: 0}}>
                         {
-                            (type == 'danger')
+                            (channel.current_metric.status == 'Error')
                             ?
                                 <IoMdClose style={{height: '12px'}} />
                             :
                                 <></>
                         }
                         {
-                            (type == 'success')
+                            (channel.current_metric.status == 'Success')
                             ?
                                 <FaCheck style={{height: '9px'}} />
                             :
                                 <></>
                         }
                         {
-                            (type == 'warning')
+                            (channel.current_metric.status == 'Warning')
                             ?
                                 <BsExclamation style={{height: '13px'}} />
                             :
                                 <></>
                         }
                         {
-                            (type == 'paused')
+                            (channel.current_metric.status == 'Paused')
                             ?
                                 <IoIosPause style={{height: '12px'}} />
+                            :
+                                <></>
+                        }
+                        {
+                            (channel.current_metric.status == 'NotChecked')
+                            ?
+                                <FaRegClock style={{height: '10px'}} />
                             :
                                 <></>
                         }

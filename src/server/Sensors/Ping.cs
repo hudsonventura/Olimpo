@@ -23,18 +23,18 @@ public class PING : ISensor
                     // A operação de ping completou dentro do tempo limite
                     pingReply = await task;
                     bool isPingSuccess = pingReply.Status == System.Net.NetworkInformation.IPStatus.Success;
-                    result = new Metric() { message = "Success", latency = pingReply.RoundtripTime, value = pingReply.RoundtripTime };
+                    result = new Metric() { message = "Success", latency = pingReply.RoundtripTime, value = pingReply.RoundtripTime, status = Metric.Status.Success };
                 }
                 else
                 {
                     // A operação de ping foi cancelada devido ao timeout
-                    result = new Metric() { message = "Ping timeout" };
+                    result = new Metric() { message = "Ping timeout", status = Metric.Status.Error };
                 }
             }
         }
         catch (System.Exception error)
         {
-            result = new Metric() { message = error.Message };
+            result = new Metric() { message = error.Message, status = Metric.Status.Error };
         }
         List<Channel> channels = new List<Channel>();
         channels.Add(new Channel() { 

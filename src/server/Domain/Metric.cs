@@ -15,11 +15,12 @@ public class Metric
     public string message { get; set; } = "Message was not set yet";
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public Status status { get; set; } = Status.Success;
+    public Status status { get; set; } = Status.NotChecked;
 
     
 
     public enum Status{
+        NotChecked = 0,
         Success = 1,
         Warning = 2,
         Paused = 3,

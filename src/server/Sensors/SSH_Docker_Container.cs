@@ -59,7 +59,8 @@ public class SSH_DOCKER_CONTAINER : ISensor
                                 current_metric = new Metric(){
                                 latency = stopwatch.ElapsedMilliseconds,
                                 message = "Success",
-                                value = elements[i].Item1
+                                value = elements[i].Item1,
+                                status = Metric.Status.Success
                             }
                         });
                     }

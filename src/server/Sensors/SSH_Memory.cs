@@ -38,7 +38,8 @@ public class SSH_MEMORY : ISensor
                                 current_metric = new Metric(){
                                 latency = stopwatch.ElapsedMilliseconds,
                                 message = "Success",
-                                value = decimal.Parse(numberWithoutComma)
+                                value = decimal.Parse(numberWithoutComma),
+                                status = Metric.Status.Success
                             }
                         });
 
@@ -53,7 +54,7 @@ public class SSH_MEMORY : ISensor
                                 current_metric = new Metric(){
                                 latency = stopwatch.ElapsedMilliseconds,
                                 message = "SSH not connected",
-                                value = -1
+                                status = Metric.Status.Error
                             }
                         });
                     }
@@ -69,7 +70,8 @@ public class SSH_MEMORY : ISensor
                             current_metric = new Metric(){
                             latency = -1,
                             message = $"Fail on SSH connect: {ex.Message}",
-                            value = -1
+                            value = -1,
+                            status = Metric.Status.Error
                         }
                     });
                 }
