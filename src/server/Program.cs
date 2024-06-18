@@ -6,6 +6,54 @@ using Olimpo.Domain;
 
 using Newtonsoft.Json;
 
+
+
+var initialCpuStats = Teste.GetCpuStats();
+        Thread.Sleep(1000); // Wait a second to get a valid reading
+        var finalCpuStats = Teste.GetCpuStats();
+
+        for (int i = 0; i < initialCpuStats.Length; i++)
+        {
+            var initialStats = initialCpuStats[i];
+            var finalStats = finalCpuStats[i];
+
+            var totalDiff = finalStats.Total - initialStats.Total;
+            var idleDiff = finalStats.Idle - initialStats.Idle;
+
+            var usage = (1.0 - ((double)idleDiff / totalDiff)) * 100;
+
+            Console.
+            
+            WriteLine($"Core {i} usage: {usage:F2}%");
+        }
+
+
+string thermalPath = "/sys/class/thermal/";
+        var directories = Directory.GetDirectories(thermalPath, "cooling_device*");
+
+        foreach (var dir in directories)
+        {
+            try
+            {
+                string type = File.ReadAllText(Path.Combine(dir, "type")).Trim();
+                string temp = File.ReadAllText(Path.Combine(dir, "temp")).Trim();
+
+                if (double.TryParse(temp, out double temperature))
+                {
+                    // Normalmente, a temperatura é dada em milicelsius, então dividimos por 1000 para obter celsius
+                    temperature /= 1000;
+                    Console.WriteLine($"Sensor: {type}, Temperature: {temperature}°C");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading temperature from {dir}: {ex.Message}");
+            }
+        }
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
