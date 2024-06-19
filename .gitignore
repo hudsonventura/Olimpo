@@ -1,2 +1,4 @@
 src/server/bin/*
 src/server/obj/*
+src/agent/bin/*
+src/agent/obj/*
