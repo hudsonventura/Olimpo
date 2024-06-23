@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Olimpo;
@@ -45,6 +46,52 @@ public class SensorController : ControllerBase
             db.SaveChanges();
             
             return Ok(sensor_db);
+        }
+        catch (System.Exception error)
+        {
+            return BadRequest(error);
+        }
+    }
+
+    [HttpGet("/sensor/types")]
+    public ActionResult Types(){
+        try
+        {
+            Dictionary<string, string> types = new Dictionary<string, string>();
+            string namespaceParaProcurar = "Olimpo.Sensors";
+            string funcaoParaExecutar = "GetType";
+
+            // Obtenha todas as classes do namespace especificado
+            var classesNoNamespace = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.IsClass && t.Namespace == namespaceParaProcurar);
+
+            foreach (var classe in classesNoNamespace)
+            {
+                try
+                {
+                    // Crie uma instância da classe
+                    var instancia = Activator.CreateInstance(classe);
+
+                    // Obtenha o método desejado
+                    var metodo = classe.GetMethod(funcaoParaExecutar);
+
+                    if (metodo != null)
+                    {
+                        // Execute o método
+                        var retorno = metodo.Invoke(instancia, null);
+                        if (retorno is string resultado)
+                        {
+                            types.Add(classe.Name, retorno.ToString());
+                        }
+                    }
+                }
+                catch (System.Exception)
+                {
+                    
+                }
+                
+            }
+            return Ok(types.ToList());
         }
         catch (System.Exception error)
         {

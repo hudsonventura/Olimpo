@@ -284,7 +284,36 @@ function Main() {
                                                         {
                                                             device.sensors.map((sensor, index3) => (
                                                                 <>
-                                                                    <Row style={{marginLeft: '12px'}}>
+                                                                    {
+                                                                        (readOnlyMode == false)
+                                                                        ?
+                                                                            <>
+                                                                                <div style={{position: "absolute", width: "20px", height: "90%"}}>
+                                                                                    <FaSortUp />
+                                                                                    <FaSortDown />
+                                                                                </div>
+                                                                                <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
+                                                                                    <TiEdit onClick={() => handleEditSensor({sensor})} /> 
+                                                                                </div>
+                                                                                <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
+                                                                                    <Row style={{marginLeft: '12px'}}>
+                                                                                        <Row>{sensor.name}</Row>
+                                                                                        <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
+                                                                                            padding: "3px", 
+                                                                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                                                                                            }} >
+                                                                                            {
+                                                                                                sensor.channels.map((channel, index4) => (
+                                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
+                                                                                                ))
+                                                                                            }
+                                                                                        </Row>
+                                                                                    </Row> 
+                                                                                </div>
+                                                                            </>
+                                                                        :
+                                                                        <>
+                                                                            <Row style={{marginLeft: '12px'}}>
                                                                         <Row>{sensor.name}</Row>
                                                                         <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
                                                                             padding: "3px", 
@@ -292,11 +321,14 @@ function Main() {
                                                                             }} >
                                                                             {
                                                                                 sensor.channels.map((channel, index4) => (
-                                                                                    <Channel channel={channel}></Channel>
+                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
                                                                                 ))
                                                                             }
                                                                         </Row>
-                                                                    </Row>    
+                                                                    </Row> 
+                                                                        </>
+                                                                    }
+                                                                       
                                                                 </>
                                                             ))
                                                         }

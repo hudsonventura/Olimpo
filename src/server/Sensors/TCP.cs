@@ -6,7 +6,12 @@ namespace Olimpo.Sensors;
 
 public class TCP : ISensor
 {
-    
+    public string GetType()
+    {
+        return "Generic TCP (like Telnet trying connect)";
+    }
+
+
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();

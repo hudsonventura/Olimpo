@@ -3,6 +3,12 @@ namespace Olimpo.Sensors;
 
 public class Ping : ISensor
 {
+    public string GetType()
+    {
+        return "Ping";
+    }
+
+
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         var ping = new System.Net.NetworkInformation.Ping();

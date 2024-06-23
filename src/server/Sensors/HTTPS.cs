@@ -8,6 +8,11 @@ namespace Olimpo.Sensors;
 
 public class HTTPS : ISensor
 {
+    public string GetType()
+    {
+        return "HTTPS";
+    }
+
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         List<Channel> channels = new List<Channel>();
@@ -92,8 +97,6 @@ public class HTTPS : ISensor
 
         }
     }
-
-
 
 }
 

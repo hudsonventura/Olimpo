@@ -8,12 +8,12 @@ import Tips from '../components/Tips';
 
 import { FaCheck, FaRegClock  } from "react-icons/fa";
 import { IoMdClose, IoIosPause } from "react-icons/io";
-import { BsExclamation } from "react-icons/bs";
+import { BsExclamation, BsGearFill } from "react-icons/bs";
 
 
 
 
-function Channel({channel}) {
+function Channel({channel, readOnlyMode}) {
 
     const [showModalSensor, setShowModalSensor] = useState(false);
     
@@ -92,8 +92,16 @@ function Channel({channel}) {
                         }
                     </div>
                     <Tips message={(channel.current_metric.status == 'Error') ? channel.current_metric.message : channel.current_metric.status}>
-                        <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '5px', marginLeft: '9px' }}>
+                        <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '5px', marginLeft: '9px', width: "140px" }}>
                             {channel.name} {channel.error} {/* {(title.length > 30) ? title.substr(0, 35) + ' ...' : title} */}
+                        </a>
+                        <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '3px', marginLeft: '150px' }}>
+                            {
+                                (!readOnlyMode)
+                                ? <BsGearFill onClick={() => alert("Clicked!")}/>
+                                : <></>
+                            }
+                            
                         </a>
                         <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', zIndex: 2 }} bg={type}>
                             {channel.current_metric.value} {channel.unit}

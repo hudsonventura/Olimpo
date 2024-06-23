@@ -18,6 +18,7 @@ import { AppContext } from './AppContext';
 function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
+    var url = settings.backend_url;
 
 
     const formRef = useRef(null);
@@ -41,6 +42,32 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
 
 
     }
+
+
+
+    //Bring sensor types from backend
+    const [sensorTypes, setSensorTypes] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            fetch(`${url}/sensor/types`, {
+                method: 'GET', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json()) // Parse the JSON body from the response
+            .then(body => {
+                
+                setSensorTypes(body);
+                console.log(sensorTypes); // Log the parsed body
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        };
+    
+        fetchData();
+      }, []);
 
     const handleForm = () => {
         const form = formRef.current;
@@ -129,16 +156,15 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
 
                 <Row>
                     <Col>
-                    <FloatingLabel controlId="floatingInput" label="Type" className="mb-3">
-                        <Form.Select aria-label="Default select example" name="type">
-                            <option>Open this select menu</option>
-                            <option value="http">HTTP</option>
-                            <option value="https">HTTPS</option>
-                            <option value="cpu">CPU</option>
-                            <option value="ping">Ping</option>
-                            <option value="SSH_Docker_Container">SSH_Docker_Container</option>
-                            <option value="SSH_Memory">SSH_Memory</option>
-                            <option value="SSHAdvancedScript">SSH Advanced Script (PRTG compatible)</option>
+                    <FloatingLabel controlId="floatingInput" label="Type" className="mb-3" >
+                        <Form.Select aria-label="Default select example" name="type" disabled={(sensor.type)}>
+                            {
+                                sensorTypes.map((item) => (
+                                    (sensor.type != undefined && item.key.toLowerCase() == sensor.type.toLowerCase()) 
+                                    ? <option selected value={item.key}>{item.value}</option>
+                                    : <option value={item.key}>{item.value}</option>
+                                ))
+                            }
                         </Form.Select>
                     </FloatingLabel>
                     </Col>

@@ -6,6 +6,11 @@ namespace Olimpo.Sensors;
 //TODO: Implements a way to inform the endpoint
 public class HTTP : ISensor
 {
+    public string GetType()
+    {
+        return "HTTP";
+    }
+
     public async Task<List<Channel>> Test(Device service, Sensor sensor)
     {
         Metric result = null;
