@@ -9,6 +9,8 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import ErrorMessage from '../components/ErrorMessage';
+
 
 
 import { AppContext } from './AppContext';
@@ -19,6 +21,11 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
     var url = settings.backend_url;
+
+    const [showError, setShowError] = useState(false); //for messages
+    const [errorMessage, setErrorMessage] = useState(
+        { time: 100000, type: 'error', subject: "", message: "" }
+    );
 
 
     const formRef = useRef(null);
@@ -70,6 +77,11 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
       }, []);
 
     const handleForm = () => {
+        const selectElement = document.getElementById('sensor_type'); //reactive the sensor in case of edit
+        selectElement.disabled = false;
+
+
+
         const form = formRef.current;
         const formData = new FormData(form);
         var data = {};
@@ -77,6 +89,9 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             if(value > '')
                 data[key] = value;
         });
+
+        
+
 
         var url = settings.backend_url;
 
@@ -96,6 +111,7 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             })
             .catch((error) => {
                 console.error('Error:', error);
+                setErrorMessage({ time: 100000, type: 'error', subject: "Create sendor", message: error });
             });
         }
         //updating sensor
@@ -110,18 +126,24 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             .then(response => response.json()) // Parse the JSON body from the response
             .then(body => {
                 console.log('Success:', body); // Log the parsed body
-                setShowModal(false); // Fechar o modal após o sucesso
+                if(body.status >= 300){
+                    setErrorMessage({ time: 100000, type: 'error', subject: "Edit sensor", message: body.errors.type[0] });
+                    setShowError(true);
+                }else{
+                    setShowModal(false); // Fechar o modal após o sucesso
+                }
+
             })
             .catch((error) => {
                 console.error('Error:', error);
+                setErrorMessage({ time: 100000, type: 'error', subject: "Edit sensor", message: error });
             });
         }
-
-
-        
-
         
     }
+
+
+    
 
     return (
         <Modal
@@ -130,6 +152,8 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             >
+            <ErrorMessage show={showError} setShow={setShowError} time={errorMessage.time} type={errorMessage.type} message={errorMessage.message} subject={errorMessage.subject} />
+            <Button onClick={() => setShowError(true)}>Show Toast</Button>
             <Modal.Header closeButton onClick={() => setShowModal(false)}>
                 <Modal.Title id="contained-modal-title-vcenter">
                     <>
@@ -157,7 +181,7 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
                 <Row>
                     <Col>
                     <FloatingLabel controlId="floatingInput" label="Type" className="mb-3" >
-                        <Form.Select aria-label="Default select example" name="type" disabled={(sensor.type)}>
+                        <Form.Select id="sensor_type" aria-label="Default select example" name="type" disabled={(sensor.type)}>
                             {
                                 sensorTypes.map((item) => (
                                     (sensor.type != undefined && item.key.toLowerCase() == sensor.type.toLowerCase()) 
