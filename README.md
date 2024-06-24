@@ -40,4 +40,7 @@ Just `docker compose up`, after see `http://localhost:3000`. Easy peasy lemon sq
     * Sensor network with speed up and down;
     * Sensor system with motherboard temp;
     * Sensor GPU with % used, temp and fan speed;
+ - [ ] When add a new sensor, it need to show a wait message;
+ - [X] <strinke>When delete a sensor, the code below thrown an error:</strinke>
+
 

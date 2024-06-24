@@ -10,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import ErrorMessage from '../components/ErrorMessage';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 
 
@@ -38,17 +39,7 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
         }));
     };
 
-    const handleDelete = () => {
-        const form = formRef.current;
-        const formData = new FormData(form);
-        var data = {};
-        formData.forEach((value, key) => {
-            if(value > '')
-                data[key] = value;
-        });
 
-
-    }
 
 
 
@@ -107,11 +98,16 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             .then(response => response.json()) // Parse the JSON body from the response
             .then(body => {
                 console.log('Success:', body); // Log the parsed body
-                setShowModal(false); // Fechar o modal após o sucesso
+                if(body.status >= 300){
+                    setErrorMessage({ time: 10000, type: 'error', subject: "Edit sensor", message: body.errors.name[0] });
+                    setShowError(true);
+                }else{
+                    CloseModal(); // Fechar o modal após o sucesso
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                setErrorMessage({ time: 100000, type: 'error', subject: "Create sendor", message: error });
+                setErrorMessage({ time: 10000, type: 'error', subject: "Create sendor", message: error });
             });
         }
         //updating sensor
@@ -127,21 +123,58 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             .then(body => {
                 console.log('Success:', body); // Log the parsed body
                 if(body.status >= 300){
-                    setErrorMessage({ time: 100000, type: 'error', subject: "Edit sensor", message: body.errors.type[0] });
+                    setErrorMessage({ time: 10000, type: 'error', subject: "Edit sensor", message: body.errors.type[0] });
                     setShowError(true);
                 }else{
-                    setShowModal(false); // Fechar o modal após o sucesso
+                    CloseModal(); // Fechar o modal após o sucesso
                 }
 
             })
             .catch((error) => {
                 console.error('Error:', error);
-                setErrorMessage({ time: 100000, type: 'error', subject: "Edit sensor", message: error });
+                setErrorMessage({ time: 10000, type: 'error', subject: "Edit sensor", message: error });
             });
         }
         
     }
 
+    const [showConfirm, setShowConfirm] = useState(false);
+    const handleDelete = () => {
+        if(showConfirm == false){
+            setShowConfirm(true);
+            return;
+        }
+
+        const form = formRef.current;
+        const formData = new FormData(form);
+        var data = {};
+        formData.forEach((value, key) => {
+            if(value > '')
+                data[key] = value;
+        });
+
+        //console.log(data)
+        fetch(`${url}/sensor/${data['id']}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json()) // Parse the JSON body from the response
+        .then(body => {
+            if(body.status >= 300){
+                setErrorMessage({ time: 3000, type: 'error', subject: "Delete sensor", message: "Sensor was deleted successfully" });
+                setShowError(true);
+            }else{
+                CloseModal(); // Fechar o modal após o sucesso
+            }
+        })
+        .catch((error) => {
+            setErrorMessage({ time: 100000, type: 'error', subject: "Delete sensor", message: error });
+        });
+    }
+
+    const CloseModal = () => {
+        setShowError(false); //close the error message
+        setShowModal(false); //close this modal
+    }
 
     
 
@@ -152,9 +185,9 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             >
+            <ConfirmDialog show={showConfirm} setShow={setShowConfirm} executeFunction={handleDelete} message="Do you really want to delete the sensor?" />
             <ErrorMessage show={showError} setShow={setShowError} time={errorMessage.time} type={errorMessage.type} message={errorMessage.message} subject={errorMessage.subject} />
-            <Button onClick={() => setShowError(true)}>Show Toast</Button>
-            <Modal.Header closeButton onClick={() => setShowModal(false)}>
+            <Modal.Header closeButton onClick={() => CloseModal()}>
                 <Modal.Title id="contained-modal-title-vcenter">
                     <>
                     {
@@ -228,10 +261,10 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             </Modal.Body>
             <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button variant='danger' onClick={() => handleDelete()}>Delete TO IMPLEMENT</Button> {/*//TODO: Implement delete sensor*/}
+                    <Button variant='danger' onClick={() => handleDelete()}>Delete</Button>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button variant='outline-dark' onClick={() => setShowModal(false)}>Cancel</Button>
+                    <Button variant='outline-dark' onClick={() => CloseModal()}>Cancel</Button>
                     <Button variant='success' onClick={() => handleForm()}>Save</Button>
                 </div>
             </Modal.Footer>

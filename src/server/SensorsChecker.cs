@@ -112,6 +112,10 @@ public class SensorsChecker
             while(true){
                 var db_sensor = db.sensors.Where(x => x.id == sensor.id).Include(x => x.channels).AsNoTracking().FirstOrDefault();
                 var new_channels = await GetMetric(db_sensor, service, instance, testMethod);
+                if(new_channels == null){
+                    break;
+                }
+                
                 foreach (var new_channel in new_channels)
                 {
                     try
@@ -158,9 +162,10 @@ public class SensorsChecker
 
 
     private static async Task<List<Channel>> GetMetric(Sensor sensor, Device service, object instance, MethodInfo method){
-        var channels = sensor.channels;
+        List<Channel> channels = null;
         try
         {
+            channels = sensor.channels;
             var result_task = method.Invoke(instance, new object[] { service, sensor });
             // Converte o retorno para o tipo esperado, por exemplo, string
             if (result_task is Task task)

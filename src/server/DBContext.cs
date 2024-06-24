@@ -36,36 +36,7 @@ public class Context : DbContext
 
     
 
-    private static readonly ConcurrentQueue<Func<Task>> SaveQueue = new ConcurrentQueue<Func<Task>>();
-    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
 
-    public async static Task EnqueueOperation(Func<Task> saveOperation)
-    {
-        SaveQueue.Enqueue(saveOperation);
-        _ = ProcessSaveQueueAsync();  // Chama o processamento da fila, ignorando a Task retornada
-    }
 
-    private static async Task ProcessSaveQueueAsync()
-    {
-        await Semaphore.WaitAsync();
-        try
-        {
-            while (SaveQueue.TryDequeue(out var saveOperation))
-            {
-                try
-                {
-                    await saveOperation();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Erro ao processar a operação de salvamento: {ex.Message}");
-                }
-            }
-        }
-        finally
-        {
-            Semaphore.Release();
-        }
-    }
     
 }

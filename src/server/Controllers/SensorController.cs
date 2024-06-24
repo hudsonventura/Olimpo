@@ -53,6 +53,25 @@ public class SensorController : ControllerBase
         }
     }
 
+    [HttpDelete("/sensor/{id}")]
+    public ActionResult Delete(Guid id){
+        try
+        {
+            var sensor_db = db.sensors.Where(x => x.id == id)
+                                .Include(s => s.channels)
+                                .ThenInclude(c => c.metrics) // Inclui entidades relacionadas
+                            .FirstOrDefault(x => x.id == id);
+            db.Remove(sensor_db);
+            db.SaveChanges();
+            
+            return Ok(true);
+        }
+        catch (System.Exception error)
+        {
+            return BadRequest(error);
+        }
+    }
+
     [HttpGet("/sensor/types")]
     public ActionResult Types(){
         try
