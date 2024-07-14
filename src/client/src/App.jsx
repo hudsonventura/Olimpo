@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppProvider } from './AppContext';
 
 import Main from './pages/Main';
-import Errors from './pages/Errors';
+import Problems from './pages/Problems';
 import NotFound from './pages/NotFound';
 
 const router = createBrowserRouter(
@@ -18,8 +18,8 @@ const router = createBrowserRouter(
 			element: <Main />,
 		},
 		{
-			path: "/Errors",
-			element: <Errors />,
+			path: "/Problems",
+			element: <Problems />,
 		},
 		{
 			//path: "/Sensors",

@@ -314,18 +314,18 @@ function Main() {
                                                                         :
                                                                         <>
                                                                             <Row style={{marginLeft: '12px'}}>
-                                                                        <Row>{sensor.name}</Row>
-                                                                        <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
-                                                                            padding: "3px", 
-                                                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                                                                            }} >
-                                                                            {
-                                                                                sensor.channels.map((channel, index4) => (
-                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
-                                                                                ))
-                                                                            }
-                                                                        </Row>
-                                                                    </Row> 
+                                                                                <Row>{sensor.name}</Row>
+                                                                                <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
+                                                                                    padding: "3px", 
+                                                                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                                                                                    }} >
+                                                                                    {
+                                                                                        sensor.channels.map((channel, index4) => (
+                                                                                            <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
+                                                                                        ))
+                                                                                    }
+                                                                                </Row>
+                                                                            </Row> 
                                                                         </>
                                                                     }
                                                                        

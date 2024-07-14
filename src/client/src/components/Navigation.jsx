@@ -29,7 +29,7 @@ function Navigation({data, readOnlyMode, setReadOnlyMode}) {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link href="/Main">Home</Nav.Link>
-                    <Nav.Link href="/ListErrors">List Errors</Nav.Link>
+                    <Nav.Link href="/Problems">List Problems</Nav.Link>
                 </Nav>
                 <Nav className="me-auto"></Nav>
                 <Nav className="me-auto"></Nav>
