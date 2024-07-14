@@ -138,9 +138,9 @@ function Problems() {
                                     (countChannelsInDevice_Error(device) > 0)
                                     ?
                                         <tr key={index} >
-                                            <td>Stack - {stack.name}</td>
-                                            <td key={index2}>Device - {device.name}</td>
-                                            <td key={index3} >Sensor/channel - {sensor.name}
+                                            <td>{stack.name}</td>
+                                            <td key={index2}>{device.name} - <small class="text-body-secondary">{device.host}</small></td>
+                                            <td key={index3} >
                                                 <Row style={{marginLeft: '12px'}}>
                                                     <Row>{sensor.name}</Row>
                                                     <Row xs={2} md={4} lg={6} style={{borderStyle: "solid", borderWidth: "1px", borderColor: "#D3D3D3", borderRadius: "9px", 
