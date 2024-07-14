@@ -3,6 +3,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Badge from 'react-bootstrap/Badge';
 import Col from 'react-bootstrap/Col';
+import { useLocation } from 'react-router-dom';
+
 
 import Form from 'react-bootstrap/Form';
 
@@ -17,6 +19,9 @@ function Navigation({data, readOnlyMode, setReadOnlyMode}) {
         readOnlyMode = true;
     }
 
+    const location = useLocation();
+
+
     return (
         <Navbar expand="lg" className="bg-body-tertiary" sticky="top" bg="dark" data-bs-theme="dark" >
 
@@ -28,8 +33,8 @@ function Navigation({data, readOnlyMode, setReadOnlyMode}) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Nav.Link href="/Main">Home</Nav.Link>
-                    <Nav.Link href="/Problems">List Problems</Nav.Link>
+                    <Nav.Link style={(location.pathname) == '/Main' || (location.pathname) == '/' ? {fontWeight: '800', color: '#EE9999'} : {}} href="/Main">Home</Nav.Link>
+                    <Nav.Link style={(location.pathname) == '/Problems' ? {fontWeight: '800', color: '#EE9999'} : {}} href="/Problems">List Problems</Nav.Link>
                 </Nav>
                 <Nav className="me-auto"></Nav>
                 <Nav className="me-auto"></Nav>
