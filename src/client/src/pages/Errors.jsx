@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Container from 'react-bootstrap/esm/Container';
+import Button from 'react-bootstrap/esm/Button';
+import Table from 'react-bootstrap/esm/Table';
+import Tooltip from 'react-bootstrap/esm/Tooltip';
+import OverlayTrigger from 'react-bootstrap/esm/OverlayTrigger';
 
 import ToastyGroup from '../components/ToastyGroup';
 
@@ -13,7 +13,7 @@ import CalcChannels, { countChannelsInAllStacks_Success, countChannelsInAllStack
 
 import GetMainData from '../components/GetMainData';
 
-function ListErrors() {
+function Errors() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -111,4 +111,4 @@ function ListErrors() {
   );
 }
 
-export default ListErrors;
+export default Errors;

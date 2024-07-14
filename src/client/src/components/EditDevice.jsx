@@ -6,14 +6,14 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 
-import { AppContext } from './AppContext';
+import { AppContext } from '../AppContext';
 
 
 
 function EditDevice({stack, device, setDevice, showModal, setShowModal}) {
 
     const {settings} = useContext(AppContext);
-
+    
 
     const formRef = useRef(null);
 

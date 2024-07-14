@@ -80,4 +80,4 @@ function CalcChannels(){
 
 }
 
-//export default CalcChannels;
+export default CalcChannels;

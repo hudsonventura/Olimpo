@@ -14,7 +14,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 
 
 
-import { AppContext } from './AppContext';
+import { AppContext } from '../AppContext';
 
 
 

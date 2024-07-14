@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 
-import { AppContext } from '../components/AppContext';
+import { AppContext } from '../AppContext';
 
 
 

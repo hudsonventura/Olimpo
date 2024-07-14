@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import { AppContext } from '../components/AppContext';
+import { AppContext } from '../AppContext';
 
 export function GetMainData({ setData, setLoading, setError }) {
 
