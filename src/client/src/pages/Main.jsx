@@ -293,7 +293,7 @@ function Main() {
                                                                                     <FaSortDown />
                                                                                 </div>
                                                                                 <div style={{position: "absolute", marginLeft: "20px", width: "20px", height: "90%"}}>
-                                                                                    <TiEdit onClick={() => handleEditSensor({sensor})} /> 
+                                                                                    <TiEdit onClick={() => handleEditSensor({sensor})} title="Edit the sensor" /> 
                                                                                 </div>
                                                                                 <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
                                                                                     <Row style={{marginLeft: '12px'}}>
@@ -304,7 +304,7 @@ function Main() {
                                                                                             }} >
                                                                                             {
                                                                                                 sensor.channels.map((channel, index4) => (
-                                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
+                                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel} />
                                                                                                 ))
                                                                                             }
                                                                                         </Row>

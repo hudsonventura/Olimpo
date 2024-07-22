@@ -115,7 +115,7 @@ function EditDevice({stack, device, setDevice, showModal, setShowModal}) {
             </Modal.Header>
             <Modal.Body>
                 <Form ref={formRef}>
-                <Form.Control type="text" name='id' value={device.id} /> edive
+                <Form.Control type="text" name='id' value={device.id} />
                 <Form.Control type="text" name='id_stack' value={stack.id} /> stack
 
                 <Form.Group className="mb-3" controlId="name">
