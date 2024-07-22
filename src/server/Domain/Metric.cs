@@ -24,7 +24,8 @@ public class Metric
         Success = 1,
         Warning = 2,
         Paused = 3,
-        Error = -1
+        Error = -1, 
+        Offline = -2
 
     }
 }

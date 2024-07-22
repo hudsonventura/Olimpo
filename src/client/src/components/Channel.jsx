@@ -1,64 +1,92 @@
-import Toast from 'react-bootstrap/Toast';
-import Badge from 'react-bootstrap/Badge';
 import { useState } from 'react';
 
+import "../components/Channel.css";
 
-import EditSensor from './EditStack';
+import Toast from 'react-bootstrap/Toast';
+import Badge from 'react-bootstrap/Badge';
+
+
 import Tips from '../components/Tips';
+import EditChannel from '../components/EditChannel';
+
 
 import { FaCheck, FaRegClock  } from "react-icons/fa";
 import { IoMdClose, IoIosPause } from "react-icons/io";
 import { BsExclamation, BsGearFill } from "react-icons/bs";
+import { TbPlugX } from "react-icons/tb";
+
 
 
 
 
 function Channel({channel, readOnlyMode}) {
 
-    const [showModalSensor, setShowModalSensor] = useState(false);
+    const [showModalEditChannel, setShowModalEditChannel] = useState(false);
+
     
-    const handleEditSensor = () => {
-        console.log("Form enviado "+channel.id);
-        setShowModalSensor(true);
-    }
 
     let type = 'danger'; 
+    let bg_type = 'text-bg-danger';
     switch (channel.current_metric.status) {
         case 'Success':
             type = 'success';
+            bg_type = 'text-bg-success';
             break;
 
         case 'Warning':
             type = 'warning';
+            bg_type = 'text-bg-warning';
+            bg_type = 'text-bg-warning';
             break;
         
         case 'Paused':
             type = 'primary';
+            bg_type = 'text-bg-primary';
             break;
 
         case 'Error':
             type = 'danger';
+            bg_type = 'text-bg-danger';
             break;
 
         case 'NotChecked':
             type = 'secondary';
+            bg_type = 'text-bg-secondary';
             break;
 
-        default: type = 'danger';
+        case 'Offline':
+            type = 'offline';
+            bg_type = 'offline';
             break;
+
     }
+
+
+
+    const handleEditChannel = ({channel}) => {
+        setShowModalEditChannel(true);
+    }
+
+
 
 
     return (
         <>
+            <EditChannel showModal={showModalEditChannel} setShowModal={setShowModalEditChannel} channel={channel}/>
             <Toast style={{ marginLeft: '12px', marginRight: '-9px', width: '180px', height: '45px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingRight: '50px', position: 'relative' }}
-                onDoubleClick={(e) => handleEditSensor()}
                 >
-                    <div className={"text-bg-"+type} style={{borderStyle: "none", position: "absolute", width: "14px", height: "104%", marginLeft: "-13px", marginTop: '-1px',  borderRadius: "3px", borderTopRightRadius: 0, borderEndEndRadius: 0}}>
+                    <div className={bg_type} style={{borderStyle: "none", position: "absolute", width: "14px", height: "104%", marginLeft: "-13px", marginTop: '-1px',  borderRadius: "3px", borderTopRightRadius: 0, borderEndEndRadius: 0}}>
                         {
                             (channel.current_metric.status == 'Error')
                             ?
                                 <IoMdClose style={{height: '12px'}} />
+                            :
+                                <></>
+                        }
+                        {
+                            (channel.current_metric.status == 'Offline')
+                            ?
+                                <TbPlugX style={{height: '16px'}} />
                             :
                                 <></>
                         }
@@ -90,19 +118,17 @@ function Channel({channel, readOnlyMode}) {
                             :
                                 <></>
                         }
+                        {
+                            (!readOnlyMode)
+                            ? <BsGearFill style={{height: '10px', rotate: 'true' }} animation="border"   onClick={() => handleEditChannel(channel)}/>
+                            : <> </>
+                        }
                     </div>
                     <Tips message={(channel.current_metric.status == 'Error') ? channel.current_metric.message : channel.current_metric.status}>
                         <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '5px', marginLeft: '9px', width: "140px" }}>
                             {channel.name} {channel.error} {/* {(title.length > 30) ? title.substr(0, 35) + ' ...' : title} */}
                         </a>
-                        <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '3px', marginLeft: '150px' }}>
-                            {
-                                (!readOnlyMode)
-                                ? <BsGearFill onClick={() => alert("Clicked!")}/>
-                                : <></>
-                            }
-                            
-                        </a>
+                        
                         <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', zIndex: 2 }} bg={type}>
                             {channel.current_metric.value} {channel.unit}
                         </Badge>

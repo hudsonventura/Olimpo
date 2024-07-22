@@ -20,7 +20,7 @@ public class Ping : ISensor
         {
             using (var cts = new CancellationTokenSource())
             {
-                cts.CancelAfter(TimeSpan.FromMilliseconds(sensor.timeout)); // Timeout de 5 segundos
+                cts.CancelAfter(TimeSpan.FromMilliseconds(sensor.timeout));
                 var task = ping.SendPingAsync(service.host);
                 var completedTask = await Task.WhenAny(task, Task.Delay(Timeout.Infinite, cts.Token));
 
@@ -34,7 +34,7 @@ public class Ping : ISensor
                 else
                 {
                     // A operação de ping foi cancelada devido ao timeout
-                    result = new Metric() { message = "Ping timeout", status = Metric.Status.Error };
+                    result = new Metric() { message = "Ping timeout", status = Metric.Status.Offline };
                 }
             }
         }
