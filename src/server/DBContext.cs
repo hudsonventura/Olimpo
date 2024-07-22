@@ -30,7 +30,6 @@ public class Context : DbContext
 
                 public DbSet<Channel> channels { get; set; }
     
-                    public DbSet<Alert> alerts { get; set; }
 
                     public DbSet<Metric> metrics { get; set; }
 

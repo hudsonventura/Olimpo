@@ -10,8 +10,6 @@ public class Channel
 
     
 
-    public Alert? alerts { get; set; }
-
 
     public string? unit { get; set; }
 
