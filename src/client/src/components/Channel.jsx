@@ -78,7 +78,7 @@ function Channel({channel, readOnlyMode}) {
 
     return (
         <>
-            <EditChannel showModal={showModalEditChannel} setShowModal={setShowModalEditChannel} channel={channel}/>
+            <EditChannel showModal={showModalEditChannel} setShowModal={setShowModalEditChannel} income_channel={channel} />
             <Toast style={{ marginLeft: '12px', marginRight: '-9px', width: '180px', height: '45px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingRight: '50px', position: 'relative', borderStyle: 'solid', borderColor: line }}
                 >
                     <div className={bg_type} style={{borderStyle: "none", position: "absolute", width: "14px", height: "104%", marginLeft: "-13px", marginTop: '-1px',  borderRadius: "3px", borderTopRightRadius: 0, borderEndEndRadius: 0}}>
@@ -130,7 +130,7 @@ function Channel({channel, readOnlyMode}) {
                             : <> </>
                         }
                     </div>
-                    <Tips message={(channel.current_metric.status == 'Error') ? channel.current_metric.message : channel.current_metric.status}>
+                    <Tips message={channel.current_metric.message}>
                         <a style={{ fontSize: '10px', position: 'absolute', zIndex: 1, textAlign: 'left', marginTop: '5px', marginLeft: '9px', width: "140px" }}>
                             {channel.name} {channel.error} {/* {(title.length > 30) ? title.substr(0, 35) + ' ...' : title} */}
                         </a>

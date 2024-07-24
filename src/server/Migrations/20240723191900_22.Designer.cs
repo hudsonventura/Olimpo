@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olimpo;
@@ -11,9 +12,10 @@ using Olimpo;
 namespace server.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240723191900_22")]
+    partial class _22
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,30 +39,30 @@ namespace server.Migrations
                     b.Property<Guid>("current_metricid")
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("danger")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("danger_orientation")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("danger_value")
-                        .HasColumnType("numeric");
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("success")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("success_orientation")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("success_value")
-                        .HasColumnType("numeric");
 
                     b.Property<string>("unit")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("warning")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("warning_orientation")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("warning_value")
-                        .HasColumnType("numeric");
 
                     b.HasKey("id");
 

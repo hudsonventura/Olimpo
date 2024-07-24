@@ -124,14 +124,22 @@ public class SensorsChecker
                         Channel channel = sensor_db.channels.Where(x => x.channel_id == new_channel.channel_id)//.Include(x => x.current_metric)
                         .FirstOrDefault();
 
+                        
+
                         //the channel does not exists in the database, so, CREATE it
                         if(channel == null){
+                            var (status, msg) = DetermineStatus(new_channel);
+                            new_channel.current_metric.status = status;
+                            new_channel.current_metric.message = msg;
                             sensor_db.channels.Add(new_channel);
                         }
 
                         //the channel does already exists in the database, so, UPDATE it
                         if(channel != null){
                             channel.current_metric = new_channel.current_metric;
+                            var (status, msg) = DetermineStatus(channel);
+                            channel.current_metric.status = status;
+                            channel.current_metric.message = msg;
                             channel.metrics.Add(new_channel.current_metric);
                         }
 
@@ -158,6 +166,57 @@ public class SensorsChecker
             
         }
     }
+
+
+
+
+    private static (Metric.Status, string) DetermineStatus(Channel channel)
+    {
+        if(channel.id == Guid.Parse("5ac7cb53-7e31-4c87-adbe-d5955218b010")){
+            Console.WriteLine();
+        }
+
+        if(channel.current_metric.status == Metric.Status.Offline){
+            return (Metric.Status.Offline, channel.current_metric.message);
+        }
+        
+        var status_danger = DetermineStatus_2((decimal) channel.current_metric.value, channel.danger_value, channel.danger_orientation);
+        if(status_danger){
+            var msg = $"The value is worst than {channel.danger_value}{channel.unit}";
+            return (Metric.Status.Error, msg);
+        }
+
+        var status_warning = DetermineStatus_2((decimal) channel.current_metric.value, channel.warning_value, channel.warning_orientation);
+        if(status_warning){
+            var msg = $"The value is worst than {channel.warning_value}{channel.unit} but better than {channel.danger_value}{channel.unit}";
+            return (Metric.Status.Warning, msg);
+        }
+
+        var status_success = DetermineStatus_2((decimal) channel.current_metric.value, channel.success_value, channel.success_orientation);
+        if(status_success){
+            var msg = $"The value is better than {channel.success_value}{channel.unit}";
+            return (Metric.Status.Success, msg);
+        }
+
+        return (Metric.Status.Success, channel.current_metric.message);
+    }
+
+    private static bool DetermineStatus_2(decimal value, decimal base_value, Channel.Orientation orientation){
+        if(orientation == Channel.Orientation.Disabled){
+            return false;
+        }
+
+        switch(orientation){
+            case Channel.Orientation.GreaterThan:           return (value >  base_value) ? true : false;
+            case Channel.Orientation.GreaterThanOrEqual:    return (value >= base_value) ? true : false;
+            case Channel.Orientation.Equal:                 return (value == base_value) ? true : false;
+            case Channel.Orientation.LessThanOrEqual:       return (value <= base_value) ? true : false;
+            case Channel.Orientation.LessThan:              return (value <  base_value) ? true : false;
+            default:                                        return true;
+        }
+    }
+
+
 
 
 
