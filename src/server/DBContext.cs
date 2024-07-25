@@ -24,14 +24,15 @@ public class Context : DbContext
 
     public DbSet<Stack> stacks { get; set; }
 
-        public DbSet<Device> devices { get; set; }
+    public DbSet<Device> devices { get; set; }
 
-            public DbSet<Sensor> sensors { get; set; }
+    public DbSet<Sensor> sensors { get; set; }
 
-                public DbSet<Channel> channels { get; set; }
+    public DbSet<Channel> channels { get; set; }
     
 
-                    public DbSet<Metric> metrics { get; set; }
+    public DbSet<Metric_History> metrics_history { get; set; }
+    public DbSet<Metric> metrics { get; set; }
 
     
 

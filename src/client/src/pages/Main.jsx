@@ -100,7 +100,7 @@ function Main() {
             <>
                 <div style={{position: 'fixed', left: '40%', top: '45%'}}>
                     <Alert variant='danger'>
-                        {error} - Verify the connection
+                        {error} - Verify the connection and the backend's container
                     </Alert>
                 </div>
                 
@@ -148,7 +148,7 @@ function Main() {
                                         <TiEdit onClick={() => handleEditStack(stack)} />
                                     </div>
                                     <div className="position-relative ml-3" style={{marginLeft: "40px", height: "90%"}}>
-                                        <a> {stack.name} </a>
+                                        <a> {stack.name} {stack.id}</a>
                                     </div>
                                 </td>
                                 <td>

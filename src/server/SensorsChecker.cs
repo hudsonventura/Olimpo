@@ -129,22 +129,34 @@ public class SensorsChecker
 
                         //the channel does not exists in the database, so, CREATE it
                         if(channel == null){
-                            var (status, msg) = DetermineStatus(new_channel);
-                            new_channel.current_metric.status = status;
-                            new_channel.current_metric.message = msg;
+                            (new_channel.current_metric.status, new_channel.current_metric.message) = DetermineStatus(new_channel);
                             sensor_db.channels.Add(new_channel);
+                            db.SaveChanges();
+                            continue;
                         }
 
                         //the channel does already exists in the database, so, UPDATE it
-                        if(channel != null){
+
+                        //the current_metric doesn't exists yet, so add
+                        if (channel.current_metric == null){
                             channel.current_metric = new_channel.current_metric;
-                            var (status, msg) = DetermineStatus(channel);
-                            channel.current_metric.status = status;
-                            channel.current_metric.message = msg;
+                            (channel.current_metric.status, channel.current_metric.message) = DetermineStatus(channel);
                             //channel.metrics.Add((Metric_History)new_channel.current_metric); //TODO: adicionar o historico
+                            db.SaveChanges();
+                            continue;
                         }
 
+                        //the current_metric already exists, so UPDATE
+                        channel.current_metric.datetime = new_channel.current_metric.datetime;
+                        channel.current_metric.latency = new_channel.current_metric.latency;
+                        channel.current_metric.value = new_channel.current_metric.value;
+                        var (status, msg) = DetermineStatus(channel);
+                        channel.current_metric.status = status;
+                        channel.current_metric.message = msg;
+                        //channel.metrics.Add((Metric_History)new_channel.current_metric); //TODO: adicionar o historico
                         db.SaveChanges();
+                        continue;
+
 
                     }
                     catch (System.Exception error)

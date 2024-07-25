@@ -28,8 +28,8 @@ public class Channel
     public Orientation danger_orientation { get; set; }
 
 
-    public Metric current_metric { get; set; } = new Metric();
-    public List<Metric> metrics { get; set; } = new List<Metric>();
+    public Metric current_metric { get; set; }
+    public List<Metric_History> metrics { get; set; } = new List<Metric_History>();
 
 
     
