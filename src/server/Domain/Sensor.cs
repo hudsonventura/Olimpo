@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using Olimpo.Domain;
+using SnowflakeID;
 
 namespace Olimpo.Sensors;
 
 public partial class Sensor
 {
-    public Guid id { get; set; }
+    [Key]
+    public string id { get; set; } = SnowflakeIDGenerator.GetSnowflake(0).Id.ToString();
 
     public string name { get; set; }
 

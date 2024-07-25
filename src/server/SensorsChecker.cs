@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Olimpo.Domain;
 using Olimpo.Sensors;
+using SnowflakeID;
 
 namespace Olimpo;
 
@@ -9,7 +10,7 @@ public class SensorsChecker
 {
     public static void StartLoopChecker(IConfiguration appsettings)
     {
-        Dictionary<Guid, (Sensor, Task, CancellationTokenSource)> manager_sensors = new Dictionary<Guid, (Sensor, Task, CancellationTokenSource)>();
+        Dictionary<string, (Sensor, Task, CancellationTokenSource)> manager_sensors = new Dictionary<string, (Sensor, Task, CancellationTokenSource)>();
         using (var db = new Context(appsettings)){
             while(true){
                 List<Stack> stacks = db.stacks
@@ -78,7 +79,7 @@ public class SensorsChecker
             Channel channel_fake = new Channel(){
                 name = "Not checked",
                 current_metric = new Metric(){
-                    id = Guid.NewGuid(),
+                    id = SnowflakeIDGenerator.GetSnowflake(0),
                     status = Metric.Status.Error,
                     message = $"The type {sensor.type.ToString()} was not implemented yet"
                 }};
@@ -96,7 +97,7 @@ public class SensorsChecker
             Channel channel_fake = new Channel(){
                 name = "Not checked",
                 current_metric = new Metric(){
-                    id = Guid.NewGuid(),
+                    id = SnowflakeIDGenerator.GetSnowflake(0),
                     status = Metric.Status.Error,
                     message = $"The interface ISensor was not implemented correctly in the class {sensor.type.ToString()}"
                 }
@@ -140,7 +141,7 @@ public class SensorsChecker
                             var (status, msg) = DetermineStatus(channel);
                             channel.current_metric.status = status;
                             channel.current_metric.message = msg;
-                            channel.metrics.Add(new_channel.current_metric);
+                            //channel.metrics.Add((Metric_History)new_channel.current_metric); //TODO: adicionar o historico
                         }
 
                         db.SaveChanges();
@@ -172,9 +173,6 @@ public class SensorsChecker
 
     private static (Metric.Status, string) DetermineStatus(Channel channel)
     {
-        if(channel.id == Guid.Parse("5ac7cb53-7e31-4c87-adbe-d5955218b010")){
-            Console.WriteLine();
-        }
 
         if(channel.current_metric.status == Metric.Status.Offline){
             return (Metric.Status.Offline, channel.current_metric.message);

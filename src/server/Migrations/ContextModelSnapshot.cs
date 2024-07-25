@@ -24,18 +24,17 @@ namespace server.Migrations
 
             modelBuilder.Entity("Olimpo.Domain.Channel", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
-                    b.Property<Guid?>("Sensorid")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Sensorid")
+                        .HasColumnType("text");
 
                     b.Property<int>("channel_id")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("current_metricid")
-                        .HasColumnType("uuid");
+                    b.Property<string>("current_metricid")
+                        .HasColumnType("text");
 
                     b.Property<int>("danger_orientation")
                         .HasColumnType("integer");
@@ -73,12 +72,11 @@ namespace server.Migrations
 
             modelBuilder.Entity("Olimpo.Domain.Device", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
-                    b.Property<Guid?>("Stackid")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Stackid")
+                        .HasColumnType("text");
 
                     b.Property<string>("host")
                         .IsRequired()
@@ -97,12 +95,8 @@ namespace server.Migrations
 
             modelBuilder.Entity("Olimpo.Domain.Metric", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("Channelid")
-                        .HasColumnType("uuid");
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("datetime")
                         .HasColumnType("timestamp with time zone");
@@ -122,16 +116,37 @@ namespace server.Migrations
 
                     b.HasKey("id");
 
+                    b.ToTable("metrics_current");
+                });
+
+            modelBuilder.Entity("Olimpo.Domain.Metric_History", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Channelid")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("datetime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("latency")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("value")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("id");
+
                     b.HasIndex("Channelid");
 
-                    b.ToTable("metrics");
+                    b.ToTable("metrics_history");
                 });
 
             modelBuilder.Entity("Olimpo.Domain.Stack", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -147,12 +162,11 @@ namespace server.Migrations
 
             modelBuilder.Entity("Olimpo.Sensors.Sensor", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
-                    b.Property<Guid?>("Deviceid")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Deviceid")
+                        .HasColumnType("text");
 
                     b.Property<bool?>("SSL_Verification_Check")
                         .HasColumnType("boolean");
@@ -198,9 +212,7 @@ namespace server.Migrations
 
                     b.HasOne("Olimpo.Domain.Metric", "current_metric")
                         .WithMany()
-                        .HasForeignKey("current_metricid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("current_metricid");
 
                     b.Navigation("current_metric");
                 });
@@ -212,7 +224,7 @@ namespace server.Migrations
                         .HasForeignKey("Stackid");
                 });
 
-            modelBuilder.Entity("Olimpo.Domain.Metric", b =>
+            modelBuilder.Entity("Olimpo.Domain.Metric_History", b =>
                 {
                     b.HasOne("Olimpo.Domain.Channel", null)
                         .WithMany("metrics")

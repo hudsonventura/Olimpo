@@ -16,12 +16,12 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPost("/device/{id_stack}")]
-    public ActionResult Create(Guid id_stack, Device? device){
+    public ActionResult Create(string id_stack, Device? device){
         try
         {
             Stack stack = db.stacks.Where(stack => stack.id == id_stack)
                             .Include(stack => stack.devices)
-                            .FirstOrDefault();
+                            .FirstOrDefault();                         
             stack.devices.Add(device);
             db.SaveChanges();
             
@@ -35,7 +35,7 @@ public class DeviceController : ControllerBase
 
 
     [HttpPut("/device/{id}")]
-    public ActionResult Update(Guid id, Device? device){
+    public ActionResult Update(string id, Device? device){
         try
         {
             var device_db = db.devices.Where(x => x.id == device.id).FirstOrDefault();

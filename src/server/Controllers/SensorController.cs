@@ -18,7 +18,7 @@ public class SensorController : ControllerBase
     }
 
     [HttpPost("/sensor/{id_device}")]
-    public ActionResult Create(Guid id_device, Sensor? sensor){
+    public ActionResult Create(string id_device, Sensor? sensor){
         try
         {
             Device device = db.devices.Where(x => x.id == id_device)
@@ -54,7 +54,7 @@ public class SensorController : ControllerBase
     }
 
     [HttpDelete("/sensor/{id}")]
-    public ActionResult Delete(Guid id){
+    public ActionResult Delete(string id){
         try
         {
             var sensor_db = db.sensors.Where(x => x.id == id)

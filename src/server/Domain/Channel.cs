@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using SnowflakeID;
+
 namespace Olimpo.Domain;
 
 public class Channel
 {
-    public Guid id { get; set; }
+    [Key]
+    public string id { get; set; } = SnowflakeIDGenerator.GetSnowflake(0).Id.ToString();
     public string name { get; set; }
 
 

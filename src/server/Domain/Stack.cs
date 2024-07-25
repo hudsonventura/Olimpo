@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using SnowflakeID;
+
 namespace Olimpo.Domain;
 
 public class Stack // like directory
 {
-    public Guid id { get; set; } = Guid.NewGuid();
+    [Key]
+    public string id { get; set; } = SnowflakeIDGenerator.GetSnowflake(0).Id.ToString();
 
     public string name { get; set; }
 
