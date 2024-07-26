@@ -31,4 +31,14 @@ public class Metric
         Offline = -2
 
     }
+
+
+    public Metric_History ToHistoricMetric(){
+        return new Metric_History(){
+            id = this.id,
+            datetime = this.datetime,
+            latency = this.latency,
+            value = this.value
+        };
+    }
 }

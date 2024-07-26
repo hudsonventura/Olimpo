@@ -23,7 +23,7 @@ public class HTTP : ISensor
             try
             {
                 string url = $"http://{service.host}:{sensor.port}";
-                if(sensor.host != string.Empty){
+                if(sensor.host != null && sensor.host != string.Empty){
                     url = sensor.host;
                 }
 
@@ -51,15 +51,21 @@ public class HTTP : ISensor
             }finally{
                 stopwatch.Stop();
             }
-            channels.Add(new Channel(){
-                name = $"{sensor.name} - HTTP",
-                current_metric = result
-            });
 
+            //the sensor not has any channel yet
+            if(sensor.channels is null || sensor.channels.Count() == 0){
+                channels.Add(new Channel(){
+                    name = $"{sensor.name} - HTTP",
+                    current_metric = result
+                });
+            return channels;
+            }
             
+            //the sensor already has a channel
+            sensor.channels[0].current_metric = result;
+            return sensor.channels;
 
-            
         }
-        return channels;
+        
     }
 }

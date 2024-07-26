@@ -18,29 +18,15 @@ public class Channel
     public string? unit { get; set; }
 
 
-    public decimal success_value { get; set; }
-    public Orientation success_orientation { get; set; }
+    public decimal? upper_error { get; set; }
 
-    public decimal warning_value { get; set; }
-    public Orientation warning_orientation { get; set; }
+    public decimal? upper_warning { get; set; }
     
-    public decimal danger_value { get; set; }
-    public Orientation danger_orientation { get; set; }
+    public decimal? lower_warning { get; set; }
+    public decimal? lower_error { get; set; }
 
 
     public Metric current_metric { get; set; }
     public List<Metric_History> metrics { get; set; } = new List<Metric_History>();
 
-
-    
-
-
-    public enum Orientation {
-        Disabled = 0,
-        GreaterThan = 1,
-        GreaterThanOrEqual = 2,
-        Equal = 3,
-        LessThanOrEqual = 4,
-        LessThan = 5
-    }
 }

@@ -6,6 +6,8 @@ import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
+
 
 
 import { AppContext } from '../AppContext';
@@ -146,65 +148,27 @@ function EditChannel({showModal, setShowModal, income_channel }) {
                     </Col>
                 </Row>
 
-                
+                        <FloatingLabel label={'Upper ERROR limit (' + channel.unit+')'} className="mb-3">
+                            <Form.Control type="number" name='upper_error' value={channel.upper_error} onChange={handleInputChange} style={{borderColor: '#cd3545', borderWidth: '2px'}} />
+                        </FloatingLabel>
 
-                <Row>
-                    <Col>
-                    <FloatingLabel label="The channel is OK when it's value is ..." className="mb-3" >
-                        <Form.Select id="success_orientation" name="success_orientation" style={{borderColor: 'green', borderWidth: '2px'}}>
-                            {(channel.success_orientation == 0) ? <option selected value='0'>Disabled</option> : <option value='0'>Disabled</option>}
-                            {(channel.success_orientation == 1) ? <option selected value='1'>Greater than ({'>'})</option> : <option value='1'>Greater than ({'>'})</option>}
-                            {(channel.success_orientation == 1) ? <option selected value='2'>Greater than or equal ({'>='})</option> : <option value='2'>Greater than or equal ({'>='})</option>}
-                            {(channel.success_orientation == 1) ? <option selected value='3'>Equal (==)</option> : <option value='3'>Equal (==)</option>}
-                            {(channel.success_orientation == 1) ? <option selected value='4'>Less than or equal ({'<='})</option> : <option value='4'>Less than or equal ({'<='})</option>}
-                            {(channel.success_orientation == 1) ? <option selected value='5'>Less than ({'<'})</option> : <option value='5'>Less than ({'<'})</option>}
-                        </Form.Select>
-                    </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <FloatingLabel label={'Value in ' + channel.unit} className="mb-3">
-                            <Form.Control type="number" id='success_value' name='success_value' value={channel.success_value} onChange={handleInputChange} style={{borderColor: 'green', borderWidth: '2px'}} />
+
+                        <FloatingLabel label={'Upper WARNING limit (' + channel.unit+')'} className="mb-3">
+                            <Form.Control type="number" name='upper_warning' value={channel.upper_warning} onChange={handleInputChange} style={{borderColor: '#ffcd39', borderWidth: '2px'}} />
                         </FloatingLabel>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                    <FloatingLabel label="The channel is WARNING when it's value is ..." className="mb-3" >
-                        <Form.Select id="warning_orientation" name="warning_orientation" style={{borderColor: '#ffcd39', borderWidth: '2px'}}>
-                            {(channel.warning_orientation == 0) ? <option selected value='0'>Disabled</option> : <option value='0'>Disabled</option>}
-                            {(channel.warning_orientation == 1) ? <option selected value='1'>Greater than ({'>'})</option> : <option value='1'>Greater than ({'>'})</option>}
-                            {(channel.warning_orientation == 2) ? <option selected value='2'>Greater than or equal ({'>='})</option> : <option value='2'>Greater than or equal ({'>='})</option>}
-                            {(channel.warning_orientation == 3) ? <option selected value='3'>Equal (==)</option> : <option value='3'>Equal (==)</option>}
-                            {(channel.warning_orientation == 4) ? <option selected value='4'>Less than or equal ({'<='})</option> : <option value='4'>Less than or equal ({'<='})</option>}
-                            {(channel.warning_orientation == 5) ? <option selected value='5'>Less than ({'<'})</option> : <option value='5'>Less than ({'<'})</option>}
-                        </Form.Select>
-                    </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <FloatingLabel label={'Value in ' + channel.unit} className="mb-3">
-                            <Form.Control type="number" id='warning_value' name='warning_value' value={channel.warning_value} onChange={handleInputChange} style={{borderColor: '#ffcd39', borderWidth: '2px'}} />
+
+                        <Alert variant='success'>
+                            Values between upper and lower warning will be considered success
+                        </Alert>
+
+                        <FloatingLabel label={'Lower WARNING limit (' + channel.unit+')'} className="mb-3">
+                            <Form.Control type="number" name='lower_warning' value={channel.lower_warning} onChange={handleInputChange} style={{borderColor: '#ffcd39', borderWidth: '2px'}} />
                         </FloatingLabel>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                    <FloatingLabel label="The channel DANGER ok when it's value is ..." className="mb-3" >
-                        <Form.Select name="danger_orientation" style={{borderColor: '#cd3545', borderWidth: '2px'}}>
-                            {(channel.danger_orientation == 0) ? <option selected value='0'>Disabled</option> : <option value='0'>Disabled</option>}
-                            {(channel.danger_orientation == 1) ? <option selected value='1'>Greater than ({'>'})</option> : <option value='1'>Greater than ({'>'})</option>}
-                            {(channel.danger_orientation == 2) ? <option selected value='2'>Greater than or equal ({'>='})</option> : <option value='2'>Greater than or equal ({'>='})</option>}
-                            {(channel.danger_orientation == 3) ? <option selected value='3'>Equal (==)</option> : <option value='3'>Equal (==)</option>}
-                            {(channel.danger_orientation == 4) ? <option selected value='4'>Less than or equal ({'<='})</option> : <option value='4'>Less than or equal ({'<='})</option>}
-                            {(channel.danger_orientation == 5) ? <option selected value='5'>Less than ({'<'})</option> : <option value='5'>Less than ({'<'})</option>}
-                        </Form.Select>
-                    </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <FloatingLabel label={'Value in ' + channel.unit} className="mb-3">
-                            <Form.Control type="number" name='danger_value' value={channel.danger_value} onChange={handleInputChange} style={{borderColor: '#cd3545', borderWidth: '2px'}} />
+
+                        <FloatingLabel label={'Lower ERROR limit (' + channel.unit+')'} className="mb-3">
+                            <Form.Control type="number" name='lower_error' value={channel.lower_error} onChange={handleInputChange} style={{borderColor: '#cd3545', borderWidth: '2px'}} />
                         </FloatingLabel>
-                    </Col>
-                </Row>
+
                 
 
                 </Form>
