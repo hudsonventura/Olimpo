@@ -55,7 +55,7 @@ public class HTTP : ISensor
             //the sensor not has any channel yet
             if(sensor.channels is null || sensor.channels.Count() == 0){
                 channels.Add(new Channel(){
-                    name = $"{sensor.name} - HTTP",
+                    name = "Status code",
                     current_metric = result
                 });
             return channels;

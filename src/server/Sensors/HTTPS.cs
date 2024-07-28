@@ -13,10 +13,14 @@ public class HTTPS : ISensor
         return "HTTPS";
     }
 
-    public async Task<List<Channel>> Test(Device service, Sensor sensor)
+
+    public async Task<List<Channel>> Test(Device service, Sensor sensor){
+        return await Check(service, sensor, true);
+    }
+
+    protected async Task<List<Channel>> Check(Device service, Sensor sensor, bool SSL_Verification_Check)
     {
         List<Channel> channels = new List<Channel>();
-        string info = (sensor.SSL_Verification_Check == true) ? "SSL check on" : "SSL check off";
         Metric result = null;
 
         var handler = new HttpClientHandler();
@@ -30,7 +34,7 @@ public class HTTPS : ISensor
             expirationDate = cert.NotAfter;
 
             // Retornar true para ignorar a validação do certificado
-            return (bool)sensor.SSL_Verification_Check;
+            return SSL_Verification_Check;
         }; 
 
 
@@ -41,7 +45,7 @@ public class HTTPS : ISensor
             try
             {
                 string url = $"https://{service.host}:{sensor.port}";
-                if(sensor.host != string.Empty){
+                if(sensor.host != null && sensor.host != string.Empty){
                     url = sensor.host;
                 }
 
@@ -76,23 +80,42 @@ public class HTTPS : ISensor
                 stopwatch.Stop();
             }
 
-            channels.Add(new Channel(){
-                name = $"{sensor.name} - {info}",
-                channel_id = 1,
-                current_metric = result
-            });
+            //channels not exists yet
+            if(sensor.channels.Count == 0){
+                channels.Add(new Channel(){
+                    name = "Status code",
+                    channel_id = 1,
+                    current_metric = result
+                });
 
-            channels.Add(new Channel(){
-                name = $"{sensor.name} - Days for certifier expire",
-                channel_id = 2,
-                unit = " days",
-                current_metric = new Metric(){
-                    message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error", //Just one day. Change to alerts value
-                    value = (expirationDate - DateTime.UtcNow).Days,
-                    latency = stopwatch.ElapsedMilliseconds,
-                    status = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? Metric.Status.Success : Metric.Status.Error //Just one day. Change to alerts value
-                }
-            });
+                channels.Add(new Channel(){
+                    name = "Days for certifier expire",
+                    channel_id = 2,
+                    unit = " days",
+                    current_metric = new Metric(){
+                        message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error", //Just one day. Change to alerts value
+                        value = (expirationDate - DateTime.UtcNow).Days,
+                        latency = stopwatch.ElapsedMilliseconds,
+                        status = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? Metric.Status.Success : Metric.Status.Error //Just one day. Change to alerts value
+                    }
+                });
+                return channels;
+            }
+
+            //channels already exists
+            var channel1 = sensor.channels[0];
+            channel1.current_metric = result;
+            channels.Add(channel1);
+
+            var channel2 = sensor.channels[1];
+            channel2.current_metric = new Metric(){
+                message = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? "Success" : "Error", //Just one day. Change to alerts value
+                value = (expirationDate - DateTime.UtcNow).Days,
+                latency = stopwatch.ElapsedMilliseconds,
+                status = (expirationDate - DateTime.UtcNow) >= TimeSpan.FromDays(1) ? Metric.Status.Success : Metric.Status.Error //Just one day. Change to alerts value
+            };
+            channels.Add(channel2);
+            
             return channels;
 
         }

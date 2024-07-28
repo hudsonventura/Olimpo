@@ -67,14 +67,23 @@ public class TCP : ISensor
         }
 
         List<Channel> channels = new List<Channel>();
-        channels.Add(
-            new Channel(){
-                name = $"{sensor.name} - Generic TCP",
-                channel_id = 1,
-                current_metric = metric,
-                unit = "ms"
-            }
-        );
+
+        if(sensor.channels.Count() == 0){
+            channels.Add(
+                new Channel(){
+                    name = $"{sensor.name} - Generic TCP",
+                    channel_id = 1,
+                    current_metric = metric,
+                    unit = "ms"
+                }
+            );
+            return channels;
+        }
+
+        var channel1 = sensor.channels[0];
+        channel1.current_metric = metric;
+        channels.Add(channel1);
         return channels;
+        
     }
 }
