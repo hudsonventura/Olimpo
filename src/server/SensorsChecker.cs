@@ -107,7 +107,7 @@ public class SensorsChecker
             return;
         }
 
-      
+
 
         using (var db = new Context(appsettings)){
             while(true){
@@ -125,11 +125,16 @@ public class SensorsChecker
                         Channel channel = sensor_tracked.channels.Where(x => x.channel_id == new_channel.channel_id)//.Include(x => x.current_metric)
                         .FirstOrDefault();
 
+
                         
+
+                        (Metric.Status status, string msg) = new_channel.DetermineStatus();
+
 
                         //the channel does not exists in the database, so, CREATE it
                         if(channel == null){
-                            (new_channel.current_metric.status, new_channel.current_metric.message) = DetermineStatus(new_channel);
+                            new_channel.current_metric.status = status;
+                            new_channel.current_metric.message = msg;
                             sensor_tracked.channels.Add(new_channel);
                             db.SaveChanges();
                             continue;
@@ -140,7 +145,9 @@ public class SensorsChecker
                         //the current_metric doesn't exists yet, so add
                         if (channel.current_metric == null){
                             channel.current_metric = new_channel.current_metric;
-                            (channel.current_metric.status, channel.current_metric.message) = DetermineStatus(new_channel);
+                            channel.current_metric.status = status;
+                            channel.current_metric.message = msg;
+                            
                             channel.metrics.Add(new_channel.current_metric.ToHistoricMetric()); //TODO: adicionar o historico
                             db.SaveChanges();
                             continue;
@@ -150,9 +157,10 @@ public class SensorsChecker
                         channel.current_metric.datetime = new_channel.current_metric.datetime;
                         channel.current_metric.latency = new_channel.current_metric.latency;
                         channel.current_metric.value = new_channel.current_metric.value;
-                        var (status, msg) = DetermineStatus(new_channel);
+                       
                         channel.current_metric.status = status;
                         channel.current_metric.message = msg;
+
                         channel.metrics.Add(new_channel.current_metric.ToHistoricMetric()); //TODO: adicionar o historico
                         db.SaveChanges();
                         continue;
@@ -183,46 +191,8 @@ public class SensorsChecker
 
 
 
-    private static (Metric.Status, string) DetermineStatus(Channel channel)
-    {
+    
 
-        if(channel.current_metric.status == Metric.Status.Offline){
-            return (Metric.Status.Offline, channel.current_metric.message);
-        }
-
-        if(channel.upper_error is not null && channel.current_metric.value >= channel.upper_error){
-            return (Metric.Status.Error, $"Value {channel.current_metric.value} is greater than {channel.upper_error}{channel.unit}");
-        }
-
-        if(channel.upper_warning is not null && channel.current_metric.value >= channel.upper_warning){
-            return (Metric.Status.Warning, $"Value {channel.current_metric.value} is greater than {channel.upper_warning}{channel.unit}");
-        }
-
-        if(channel.lower_error is not null && channel.current_metric.value <= channel.lower_error){
-            return (Metric.Status.Error, $"Value {channel.current_metric.value} is lower than {channel.lower_error}{channel.unit}");
-        }
-
-        if(channel.lower_warning is not null && channel.current_metric.value <= channel.lower_warning){
-            return (Metric.Status.Warning, $"Value {channel.current_metric.value} is lower than {channel.lower_error}{channel.unit}");
-        }
-
-        return (Metric.Status.Success, channel.current_metric.message);
-    }
-
-    // private static bool DetermineStatus_2(decimal value, decimal base_value, Channel.Orientation orientation){
-    //     if(orientation == Channel.Orientation.Disabled){
-    //         return false;
-    //     }
-
-    //     switch(orientation){
-    //         case Channel.Orientation.GreaterThan:           return (value >  base_value) ? true : false;
-    //         case Channel.Orientation.GreaterThanOrEqual:    return (value >= base_value) ? true : false;
-    //         case Channel.Orientation.Equal:                 return (value == base_value) ? true : false;
-    //         case Channel.Orientation.LessThanOrEqual:       return (value <= base_value) ? true : false;
-    //         case Channel.Orientation.LessThan:              return (value <  base_value) ? true : false;
-    //         default:                                        return true;
-    //     }
-    // }
 
 
 
