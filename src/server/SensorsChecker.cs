@@ -21,9 +21,9 @@ public class SensorsChecker
 
                 foreach (var stack in stacks)
                 {
-                    foreach (var service in stack.devices)
+                    foreach (var device in stack.devices)
                     {
-                        foreach (var sensor in service.sensors)
+                        foreach (var sensor in device.sensors)
                         {
 
                             //if the sensor was not running yet
@@ -32,7 +32,8 @@ public class SensorsChecker
                                 var cancel = new CancellationTokenSource();
                                 CancellationToken cancelation_token = cancel.Token;
 
-                                Task task = Task.Run(() => SensorsChecker.LoopCheck(appsettings, sensor, service), cancelation_token);
+                                Console.WriteLine($"Stating a loop checker for: {stack.name} / {device.name} / {sensor.name}");
+                                Task task = Task.Run(() => SensorsChecker.LoopCheck(appsettings, sensor, device), cancelation_token);
                                 
                                 manager_sensors.Add(sensor.id, (sensor, task, cancel));
                                 continue;

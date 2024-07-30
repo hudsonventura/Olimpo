@@ -19,11 +19,10 @@ import { TbPlugX } from "react-icons/tb";
 
 
 
-function Channel({channel, readOnlyMode}) {
+
+function Channel({channel, readOnlyMode, sensor}) {
 
     const [showModalEditChannel, setShowModalEditChannel] = useState(false);
-
-    
 
     let type = 'danger'; 
     let bg_type = 'text-bg-danger';
@@ -136,7 +135,12 @@ function Channel({channel, readOnlyMode}) {
                         </a>
                         
                         <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', zIndex: 2 }} bg={type}>
-                            {channel.current_metric.value} {channel.unit}
+                            {
+                                (channel.current_metric.value == sensor.timeout)
+                                ? 'Timed out'
+                                : channel.current_metric.value + ' ' + channel.unit
+                            }
+                            
                         </Badge>
                     </Tips>
             </Toast>

@@ -85,6 +85,7 @@ public class HTTPS : ISensor
                 channels.Add(new Channel(){
                     name = "Status code",
                     channel_id = 1,
+                    unit = " Status code",
                     current_metric = result
                 });
 

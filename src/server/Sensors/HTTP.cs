@@ -56,6 +56,7 @@ public class HTTP : ISensor
             if(sensor.channels is null || sensor.channels.Count() == 0){
                 channels.Add(new Channel(){
                     name = "Status code",
+                    unit = " Status code",
                     current_metric = result
                 });
             return channels;

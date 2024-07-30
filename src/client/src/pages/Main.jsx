@@ -303,8 +303,9 @@ function Main() {
                                                                                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
                                                                                             }} >
                                                                                             {
+                                                                                                
                                                                                                 sensor.channels.map((channel, index4) => (
-                                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel} />
+                                                                                                    <Channel readOnlyMode={readOnlyMode} channel={channel} sensor={sensor} />
                                                                                                 ))
                                                                                             }
                                                                                         </Row>
@@ -321,7 +322,7 @@ function Main() {
                                                                                     }} >
                                                                                     {
                                                                                         sensor.channels.map((channel, index4) => (
-                                                                                            <Channel readOnlyMode={readOnlyMode} channel={channel}></Channel>
+                                                                                            <Channel readOnlyMode={readOnlyMode} channel={channel} sensor={sensor}></Channel>
                                                                                         ))
                                                                                     }
                                                                                 </Row>
