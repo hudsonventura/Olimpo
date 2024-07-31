@@ -14,8 +14,8 @@ public interface ISensor
     public Task<List<Channel>> Test(Device service, Sensor sensor);
 
     /// <summary>
-    /// Inform the type name to show at frontend side
+    /// Inform the type name, default port and a string containing the configs to show at frontend side
     /// </summary>
     /// <returns></returns>
-    public string GetType();
+    public (string, int, string?) GetType();
 }

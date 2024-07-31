@@ -12,9 +12,9 @@ namespace Olimpo.Sensors;
 
 public class SSH_Advanced_XML_Script : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "SSH Advanced Script (PRTG compatible)";
+        return ("SSH Advanced Script (PRTG compatible)", 22, null);
     }
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor)

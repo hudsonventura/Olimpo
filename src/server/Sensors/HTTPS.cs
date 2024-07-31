@@ -8,9 +8,9 @@ namespace Olimpo.Sensors;
 
 public class HTTPS : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "HTTPS";
+        return ("HTTPS", 443, null);
     }
 
 

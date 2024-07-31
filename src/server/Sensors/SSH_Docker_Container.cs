@@ -6,9 +6,9 @@ namespace Olimpo.Sensors;
 
 public class SSH_Docker_Container : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "SSH Docker Container";
+        return ("SSH Docker Container", 22, null);
     }
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor)

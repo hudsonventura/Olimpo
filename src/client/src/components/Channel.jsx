@@ -138,7 +138,7 @@ function Channel({channel, readOnlyMode, sensor}) {
                             {
                                 (channel.current_metric.value == sensor.timeout)
                                 ? 'Timed out'
-                                : channel.current_metric.value + ' ' + channel.unit
+                                : (channel.unit == null) ? channel.current_metric.value : channel.current_metric.value + ' ' + channel.unit
                             }
                             
                         </Badge>

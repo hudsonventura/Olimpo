@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Olimpo.Domain;
 using SnowflakeID;
 
@@ -27,5 +28,6 @@ public partial class Sensor
 
     public List<Channel>? channels { get; set; } = new List<Channel>();
 
-    
+    [Column(TypeName = "text")]
+    public string config { get; set; }
 }

@@ -4,9 +4,9 @@ namespace Olimpo.Sensors;
 
 public class CPU : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "CPU";
+        return ("CPU", 22, null);
     }
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor)

@@ -6,9 +6,9 @@ namespace Olimpo.Sensors;
 
 public class TCP : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "Generic TCP (like Telnet trying connect)";
+        return ("Generic TCP (like Telnet trying connect)", 23,null);
     }
 
 

@@ -6,9 +6,9 @@ namespace Olimpo.Sensors;
 
 public class SSH_Memory : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "Memory (via SSH)";
+        return ("Memory (via SSH)", 22,null);
     }
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor)

@@ -37,6 +37,11 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
             ...prevSensor,
             [name]: value
         }));
+
+        if(name == 'port'){
+            setDefaultPortValue(value); 
+        }
+        
     };
 
 
@@ -176,6 +181,15 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
         setShowModal(false); //close this modal
     }
 
+    const [defaultPortValue, setDefaultPortValue] = useState(sensor.port);
+    const setDefaultPort = (e) => {
+        const selectedItem = sensorTypes.find(item => item.key === e.target.value);
+        setDefaultPortValue(selectedItem.value.item2);
+        setDefaultConfigs(selectedItem.value.item3);
+    }
+
+    const [defaultConfigs, setDefaultConfigs] = useState(sensor.config);
+
     
 
     return (
@@ -214,12 +228,12 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
                 <Row>
                     <Col>
                     <FloatingLabel controlId="floatingInput" label="Type" className="mb-3" >
-                        <Form.Select id="sensor_type" aria-label="Default select example" name="type" disabled={(sensor.type)}>
+                        <Form.Select id="sensor_type" aria-label="Default select example" name="type" disabled={(sensor.type)} onChange={(e) => setDefaultPort(e)}>
                             {
                                 sensorTypes.map((item) => (
                                     (sensor.type != undefined && item.key.toLowerCase() == sensor.type.toLowerCase()) 
-                                    ? <option selected value={item.key}>{item.value}</option>
-                                    : <option value={item.key}>{item.value}</option>
+                                    ? <option selected value={item.key} >{item.value.item1}</option>
+                                    : <option          value={item.key} >{item.value.item1}</option>
                                 ))
                             }
                         </Form.Select>
@@ -227,7 +241,7 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
                     </Col>
                     <Col>
                         <FloatingLabel controlId="floatingInput" label="Port" className="mb-3">
-                            <Form.Control type="number" name='port' value={sensor.port} onChange={handleInputChange} />
+                            <Form.Control type="number" name='port' value={(sensor.port != null) ? sensor.port : defaultPortValue} onChange={handleInputChange} />
                         </FloatingLabel>
                     </Col>
                 </Row>
@@ -255,6 +269,12 @@ function EditSensor({device, sensor, setSensor, showModal, setShowModal}) {
                             <Form.Control type="password" name='password' value={sensor.password} onChange={handleInputChange} />
                         </FloatingLabel>
                     </Col>
+                </Row>
+                <Row>
+                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Specific settings</Form.Label>
+                    <Form.Control as="textarea" rows={9} name='config' value={defaultConfigs} onChange={(e) => setDefaultConfigs(e.target.value)} />
+                </Form.Group>
                 </Row>
 
                 </Form>

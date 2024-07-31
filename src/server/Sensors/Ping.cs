@@ -3,9 +3,9 @@ namespace Olimpo.Sensors;
 
 public class Ping : ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "Ping";
+        return ("Ping", 0, null);
     }
 
 

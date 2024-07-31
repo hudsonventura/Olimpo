@@ -8,9 +8,9 @@ namespace Olimpo.Sensors;
 
 public class HTTPSIgnoreInvalidCertificate : HTTPS, ISensor
 {
-    public string GetType()
+    public (string, int, string) GetType()
     {
-        return "HTTPS (Ignore Invalid Certificate)";
+        return ("HTTPS (Ignore Invalid Certificate)", 80, null);
     }
 
     public async Task<List<Channel>> Test(Device service, Sensor sensor){

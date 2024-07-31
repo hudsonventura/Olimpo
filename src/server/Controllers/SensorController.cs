@@ -37,7 +37,7 @@ public class SensorController : ControllerBase
 
 
     [HttpPut("/sensor/{id}")]
-    public ActionResult Update(Guid id, Sensor? sensor){
+    public ActionResult Update(string id, Sensor? sensor){
         try
         {
             var sensor_db = db.sensors.Where(x => x.id == sensor.id).FirstOrDefault();
@@ -76,7 +76,7 @@ public class SensorController : ControllerBase
     public ActionResult Types(){
         try
         {
-            Dictionary<string, string> types = new Dictionary<string, string>();
+            Dictionary<string, (string, int, string)> types = new Dictionary<string, (string, int, string)>();
             string namespaceParaProcurar = "Olimpo.Sensors";
             string funcaoParaExecutar = "GetType";
 
@@ -98,9 +98,9 @@ public class SensorController : ControllerBase
                     {
                         // Execute o método
                         var retorno = metodo.Invoke(instancia, null);
-                        if (retorno is string resultado)
+                        if (retorno is ValueTuple<string, int, string> tuple)
                         {
-                            types.Add(classe.Name, retorno.ToString());
+                            types.Add(classe.Name, tuple);
                         }
                     }
                 }
