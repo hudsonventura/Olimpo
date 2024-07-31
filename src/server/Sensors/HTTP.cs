@@ -23,9 +23,6 @@ public class HTTP : ISensor
             try
             {
                 string url = $"http://{service.host}:{sensor.port}";
-                if(sensor.host != null && sensor.host != string.Empty){
-                    url = sensor.host;
-                }
 
                 HttpResponseMessage response = response = await client.GetAsync(url);
                 

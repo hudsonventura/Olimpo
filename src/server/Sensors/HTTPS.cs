@@ -45,9 +45,6 @@ public class HTTPS : ISensor
             try
             {
                 string url = $"https://{service.host}:{sensor.port}";
-                if(sensor.host != null && sensor.host != string.Empty){
-                    url = sensor.host;
-                }
 
                 HttpResponseMessage response = await client.GetAsync(url);
 
